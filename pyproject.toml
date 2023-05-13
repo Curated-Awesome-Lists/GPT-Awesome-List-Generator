@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "auto-awesome"
+version = "0.1.0"
+description = ""
+authors = ["alialsaeedi19 <alialsaeedi19@gmail.com>"]
+readme = "README.md"
+packages = [{include = "connections"}, {include = "data_pipelines"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
