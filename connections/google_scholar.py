@@ -41,7 +41,6 @@ def scrape_google_scholar(keyword: str) -> pd.DataFrame:
         data.append([title, link, description, citation_count])
 
     df = pd.DataFrame(data, columns=["Title", "Link", "Description", "Citation Count"])
-
     return df
 
 
