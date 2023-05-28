@@ -10,6 +10,8 @@ packages = [{include = "connections"}, {include = "data_pipelines"}]
 python = "^3.10"
 openai = "*"
 python-dotenv = "*"
+pandas = "*"
+bs4 = "*"
 
 
 [tool.poetry.group.dev.dependencies]
