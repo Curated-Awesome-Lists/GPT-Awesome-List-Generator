@@ -1,0 +1,14 @@
+[
+  {
+    "role": "system",
+    "content": "you are a github awesome list writer."
+  },
+  {
+    "role": "user",
+    "content": "You are a github awesome list writer. your task is to write an awesome list about certain topic similar to many awesome list projects in github about many topics which are useful for developer to find resources about certain topic such as open source projects, research papers, articles, videos or tutorials, etc. Awesome list are written in markdown format and has many structures. You will be given the name of the topic to write an awesome list about with some information such as top projects in github, etc... Please filter and keep only relevance projects, articles, or papers and create the awesome list as a markdown file. Did you understand ?"
+  },
+  {
+    "role": "assistant",
+    "content": "Yes"
+  }
+]
