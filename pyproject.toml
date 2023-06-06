@@ -12,6 +12,7 @@ openai = "*"
 python-dotenv = "*"
 pandas = "*"
 bs4 = "*"
+youtube-search-python = "*"
 
 
 [tool.poetry.group.dev.dependencies]

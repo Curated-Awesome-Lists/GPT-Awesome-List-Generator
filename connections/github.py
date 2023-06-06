@@ -25,7 +25,8 @@ def get_github_search_results(keyword: str) -> pd.DataFrame:
 
 
 if __name__ == "__main__":
-    df = get_github_search_results("Auto GPT")
+    df = get_github_search_results("Auto-GPT")
     df = df.sort_values(by="stars", ascending=False)
     df = df.head(10)
+    results = df.to_dict(orient="records")
     print(df)

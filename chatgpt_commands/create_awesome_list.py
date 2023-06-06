@@ -6,11 +6,13 @@ from connections import github, google_scholar
 def get_create_awsome_list_command(
     keyword: str, projects: List[dict], papers: List[dict]
 ) -> str:
-    command = f""" create an 'awesome list' on {keyword} that I plan to share publicly
+    command = f""" 
+    I will give 
+    create an 'awesome list' on {keyword} that I plan to share publicly
     . It should be a diverse mix of resources that cater to a wide 
     range of audiences, from beginners to experts.
 
-    Here's a list of dicts of the projects and papers that I've recently found and 
+    Here's a list of dicts of the projects that I've recently found and 
     could be included:
     1. Project: {projects} \n
     2. Paper: {papers} \n

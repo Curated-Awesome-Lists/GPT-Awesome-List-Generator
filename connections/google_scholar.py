@@ -7,7 +7,7 @@ import requests
 from bs4 import BeautifulSoup
 
 
-def scrape_google_scholar(keyword: str) -> pd.DataFrame:
+def scrape_google_scholar(keyword: str) -> list[dict]:
     url = "https://scholar.google.com/scholar?q=" + keyword
 
     headers = {"User-Agent": "Mozilla/5.0"}
@@ -41,12 +41,10 @@ def scrape_google_scholar(keyword: str) -> pd.DataFrame:
         data.append([title, link, description, citation_count])
 
     df = pd.DataFrame(data, columns=["Title", "Link", "Description", "Citation Count"])
-    return df
+    df = df.dropna(axis=1, how="all")
+    return df.to_dict(orient="records")
 
 
 if __name__ == "__main__":
-    df = scrape_google_scholar("GPT-4")
-    if (df["Citation Count"].isnull()).all():
-        warnings.warn("Failed to extract citation count. Replacing them with 0")
-        df["Citation Count"] = df["Citation Count"].fillna(0).astype(int)
-    print(df)
+    scholar_dict = scrape_google_scholar("Auto-GPT")
+    print(scholar_dict)
