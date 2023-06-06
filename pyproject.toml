@@ -13,6 +13,7 @@ python-dotenv = "*"
 pandas = "*"
 bs4 = "*"
 youtube-search-python = "*"
+podsearch = "*"
 
 
 [tool.poetry.group.dev.dependencies]

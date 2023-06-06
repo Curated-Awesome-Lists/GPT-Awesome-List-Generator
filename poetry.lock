@@ -817,6 +817,18 @@ docs = ["furo (>=2023.3.27)", "proselint (>=0.13)", "sphinx (>=6.2.1)", "sphinx-
 test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest (>=7.3.1)", "pytest-cov (>=4)", "pytest-mock (>=3.10)"]
 
 [[package]]
+name = "podsearch"
+version = "0.3.1"
+description = "Let's find some podcasts!"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "podsearch-0.3.1-py3-none-any.whl", hash = "sha256:e80ad2194020038183463fd4a065cf78aa5cbc155e0064f5cdcb00f203994fa4"},
+    {file = "podsearch-0.3.1.tar.gz", hash = "sha256:808d061c94116b28517af8140e7af324049890318a27df6892cfc832f78df420"},
+]
+
+[[package]]
 name = "python-dateutil"
 version = "2.8.2"
 description = "Extensions to the standard Python datetime module"
@@ -1085,4 +1097,4 @@ httpx = ">=0.14.2"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "0d2aa7511fef6ba029d9f19545290888f69d5cfa6acbaa6e90f8d8d0e8c3b0d7"
+content-hash = "cb42c9e43b48d259fe8c1c9c8dcd1dc2d0dd396ec30e6f29e9b00c76a040b1c4"
