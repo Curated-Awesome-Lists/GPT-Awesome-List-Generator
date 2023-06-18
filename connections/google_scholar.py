@@ -1,5 +1,4 @@
 import re
-import warnings
 
 import numpy as np
 import pandas as pd
@@ -20,7 +19,7 @@ def scrape_google_scholar(keyword: str) -> list[dict]:
     data = []
     for result in search_results:
         title = result.h3.text if result.h3 else ""
-        link = result.h3.a["href"] if result.h3 and "href" in result.h3.a.attrs else ""
+        link = result.h3.a["href"] if result.h3.a and "href" in result.h3.a.attrs else ""
         description = (
             result.find("div", {"class": "gs_rs"}).text
             if result.find("div", {"class": "gs_rs"})

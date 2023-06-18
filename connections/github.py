@@ -1,8 +1,7 @@
 import requests
-import pandas as pd
 
 
-def get_github_search_results(keyword: str) -> pd.DataFrame:
+def get_github_search_results(keyword: str) -> list[dict]:
     url = f"https://api.github.com/search/repositories?q={keyword}"
     response = requests.get(url)
 
@@ -18,15 +17,13 @@ def get_github_search_results(keyword: str) -> pd.DataFrame:
             }
             results.append(repo_info)
 
-        return pd.DataFrame(results)
+        results = sorted(results, key=lambda x: x["stars"], reverse=True)
+        return results[:10]
     else:
         print(f"Failed to get data, status code: {response.status_code}")
-        return pd.DataFrame()
+        return [{}]
 
 
 if __name__ == "__main__":
-    df = get_github_search_results("Auto-GPT")
-    df = df.sort_values(by="stars", ascending=False)
-    df = df.head(10)
-    results = df.to_dict(orient="records")
-    print(df)
+    results = get_github_search_results("Auto-GPT")
+    print(results)
