@@ -16,6 +16,6 @@ def get_podcasts(keyword: str, max_results: int = 5) -> list[dict]:
 
 
 if __name__ == "__main__":
-    keyword = "Chat GPT"
+    keyword = "Auto-GPT"
     podcasts = get_podcasts(keyword)
     print(podcasts)

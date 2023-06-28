@@ -5,10 +5,10 @@
   },
   {
     "role": "user",
-    "content": "You are a github awesome list writer. your task is to write an awesome list about certain topic similar to many awesome list projects in github about many topics which are useful for developer to find resources about certain topic such as open source projects, research papers, articles, videos or tutorials, etc. Awesome list are written in markdown format and has many structures. You will be given the name of the topic to write an awesome list about with some information such as top projects in github, etc... Please filter and keep only relevance projects, articles, or papers and create the awesome list as a markdown file. Did you understand ?"
+    "content": "I will provide you with three components, one by one:\n\n1. A keyword accompanied by a description about it.\n2. A list of GitHub projects.\n3. A list of Google Scholar search results.\n4. A list of YouTube videos.\n5. A list of podcasts.\n\nI want you to generate a comprehensive 'Awesome List' for the given keyword, using the information provided, as follows:\n\n1. Refine the GitHub projects, Google Scholar results, YouTube videos, and podcasts, retaining only those that are most pertinent to the keyword and its associated description.\n2. Prioritize the filtered entries based on their relevance and other information, like the number of stars in the GitHub projects.\n3. Combine steps 1 and 2 to construct the 'Awesome List'.\n\nSend me the final results as code in a markup language, and create different main sections: 1. Table of Contents, 2. Official Resources, and additional sections for each of the resources like the GitHub projects, etc. If the resource provided is empty, then disregard that section."
   },
   {
     "role": "assistant",
-    "content": "Yes"
+    "content": "Ok. Give me the keyword and description first."
   }
 ]

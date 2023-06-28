@@ -1,19 +1,22 @@
+import json
 import os
 import openai
-import json
+from dotenv import load_dotenv
+
+from utils import get_project_root
+
+load_dotenv()
 
 
 class ChatApp:
     def __init__(self, setup_file_path):
-        openai.organization = os.getenv("OPENAI_ORG")
         openai.api_key = os.getenv("OPENAI_API_KEY")
         with open(setup_file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
         self.messages = data
 
     # "gpt-3.5-turbo" or "gpt-4"
-    def chat(self, prompt, model="gpt-3.5-turbo", tries=1):
-        self.messages.append({"role": "user", "content": prompt})
+    def send_messages(self, model="gpt-3.5-turbo", tries=1):
         response = openai.ChatCompletion.create(
             model=model,
             messages=self.messages,
@@ -23,13 +26,10 @@ class ChatApp:
 
 
 if __name__ == "__main__":
-    os.environ["OPENAI_ORG"] = ""
-    os.environ["OPENAI_API_KEY"] = ""
-    chatgpt_clien = ChatApp(
-        os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            "chatgpt_setup_data",
-            "awesome_list_context.json",
-        )
+    chatgpt_client = ChatApp(
+        get_project_root()
+        / "connections"
+        / "chatgpt_setup_data"
+        / "awesome_list_context.json",
     )
-    print(chatgpt_clien.chat("The idea is AutoGPT and the data: "))
+    print(chatgpt_client.send_messages())
