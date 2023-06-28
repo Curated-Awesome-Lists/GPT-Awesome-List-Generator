@@ -1,0 +1,65 @@
+## Table of Contents
+- [Official Resources](#official-resources)
+- [GitHub Projects](#github-projects)
+- [Google Scholar Search Results](#google-scholar-search-results)
+- [YouTube Videos](#youtube-videos)
+## Official Resources
+- [Auto-GPT GitHub Repository](https://github.com/Significant-Gravitas/Auto-GPT)
+   - An experimental open-source attempt to make GPT-4 fully autonomous.
+   - Stars: 141,731
+## GitHub Projects
+- [Auto-GPT Plugins](https://github.com/Significant-Gravitas/Auto-GPT-Plugins)
+   - Plugins for Auto-GPT.
+   - Stars: 3,258
+- [Auto-GPT-ZH](https://github.com/kaqijiang/Auto-GPT-ZH)
+   - Auto-GPT中文版本及爱好者组织 同步更新原项目 AI领域创业 自媒体组织 用AI工作学习创作变现
+   - Stars: 2,163
+- [AutoGPT-Next-Web](https://github.com/ConnectAI-E/AutoGPT-Next-Web)
+   - 🤖 Assemble, configure, and deploy autonomous AI Agents in your browser.一键免费部署你的私人AutoGPT 网页应用
+   - Stars: 2,111
+- [Free-Auto-GPT](https://github.com/IntelligenzaArtificiale/Free-Auto-GPT)
+   - Free Auto GPT with NO paids API is a repository that offers a simple version of Auto GPT, an autonomous AI agent capable of performing tasks independently. Unlike other versions, our implementation does not rely on any paid OpenAI API, making it accessible to anyone.
+   - Stars: 1,880
+- [loopgpt](https://github.com/farizrahman4u/loopgpt)
+   - Modular Auto-GPT Framework
+   - Stars: 1,089
+- [AutoGPTQ](https://github.com/PanQiWei/AutoGPTQ)
+   - An easy-to-use LLMs quantization package with user-friendly APIs, based on GPTQ algorithm.
+   - Stars: 929
+- [AutoGPT.js](https://github.com/zabirauf/AutoGPT.js)
+   - Auto-GPT on the browser
+   - Stars: 901
+- [Camel-AutoGPT](https://github.com/SamurAIGPT/Camel-AutoGPT)
+   - 🚀 Introducing 🐪 CAMEL: a game-changing role-playing approach for LLMs and auto-agents like BabyAGI & AutoGPT! Watch two agents 🤝 collaborate and solve tasks together, unlocking endless possibilities in #ConversationalAI, 🎮 gaming, 📚 education, and more! 🔥
+   - Stars: 876
+- [auto-gpt-web](https://github.com/jina-ai/auto-gpt-web)
+   - Set Your Goals, AI Achieves Them.
+   - Stars: 719
+## Google Scholar Search Results
+- [Auto-GPT for Online Decision Making: Benchmarks and Additional Opinions](https://arxiv.org/abs/2306.02224)
+   - Conducting experiments on adapting Auto-GPT for online decision making.
+- [Auto Self-Correct ChatGPT](https://www.techrxiv.org/articles/preprint/Auto_Self-Correct_ChatGPT/22688317)
+   - Comparing Auto-GPT with other methods in ChatGPT.
+- [Ask the Right Questions](https://search.proquest.com/openview/a7420cd9fadf4e7c3f2b410e739ff36b/1)
+   - Observations on the potential of Auto-GPT and AI in changing work and lives.
+- [AutoML-GPT: Automatic Machine Learning with GPT](https://arxiv.org/abs/2305.02499)
+   - Discussing AI models and the need for human intervention.
+- [From GPT to AutoGPT: a Brief Attention in NLP Processing using DL](https://www.researchgate.net/profile/Mohamed-Fezari-2/publication/370107237_From_GPT_to_AutoGPT_a_Brief_Attention_in_NLP_Processing_using_DL)
+   - Exploring the functions and limitations of Auto-GPT.
+- [Multi-Agent Collaboration: Harnessing the Power of Intelligent LLM Agents](https://arxiv.org/abs/2306.03314)
+   - A proposed framework for modeling Auto-GPT runs and agent plugins.
+- [Using AI and ChatGPT in Brand Storytelling](https://aisel.aisnet.org/amcis2023/sig_aiaa/sig_aiaa/14/)
+   - Utilizing AI chatbots like Auto-GPT and ChatGPT in brand storytelling.
+- [Autonomous Agents Discovery and Constraints Composition](https://www.researchgate.net/profile/Debmalya-Biswas/publication/371120464_Autonomous_Agents_Discovery_and_Constraints_Composition)
+   - Discussion on the potential and execution of autonomous agents like Auto-GPT.
+## YouTube Videos
+- [AutoGPT Tutorial - More Exciting Than ChatGPT](https://www.youtube.com/watch?v=FeIIaJUN-4A)
+   - A tutorial showcasing the usage and capabilities of AutoGPT.
+- [How to Use Auto GPT God Mode Ai - Auto GPT got a Huge upgrade](https://www.youtube.com/watch?v=Zgk9-aTJ--o)
+   - Demonstrating the enhanced features of Auto GPT and its application.
+- [Le problème avec GPT-Engineer, Auto-GPT et compagnie.](https://www.youtube.com/watch?v=JgXMxPKUvao)
+   - Discussion on GPT and its variations, including Auto-GPT.
+- [J'ai intégré AUTOGPT dans CHATGPT (j'étais pas prêt)](https://www.youtube.com/watch?v=85Z3Po600X8)
+   - A video demonstrating how to integrate AutoGPT into CHATGPT.
+- [Kann alles, macht alles (und ist kaputt) | Auto-GPT ausprobiert](https://www.youtube.com/watch?v=MwlKlC2gBSs)
+   - Exploring the capabilities and limitations of Auto-GPT.
