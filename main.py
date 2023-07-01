@@ -5,15 +5,8 @@ import re
 
 from utils import get_project_root
 
-# Set these two keys to create a new awesome list
-keyword = "Data Version Control (DVC)"
-description = """Data Version Control is a free, open-source tool for data management, 
-ML pipeline automation, and experiment management. This helps data science and machine 
-learning teams manage large datasets, make projects reproducible, and collaborate better
-"""
 
-
-def get_awesome_list_input_data() -> dict:
+def get_awesome_list_input_data(keyword: str, description: str) -> dict:
     return_data = {
         "Keyword and Description": f"keyword: {keyword}, description: {description}"
     }
@@ -28,14 +21,15 @@ def get_awesome_list_input_data() -> dict:
     return return_data
 
 
-def append_data_to_chatgpt_client_messages(chatgp_client: ChatApp) -> None:
+def append_data_to_chatgpt_client_messages(chatgp_client: ChatApp, data: dict) -> None:
     """Append the data from get_awesome_list_input_data() chatgpt_client.messages"""
-    data = get_awesome_list_input_data()
     for k, v in data.items():
         chatgp_client.messages.append({"role": "user", "content": f"{k}: {v}"})
 
 
 def extract_markdown_from_str(text: str) -> str:
+    """Extract markdown from a string by removing all lines that don't start with
+    -, *, #, or ["""
     lines = text.split("\n")
     markdown_lines = [
         line for line in lines if re.match(r"^(\s*[-*]|\s*#+\s*|\[.*\]\(.*\))", line)
@@ -43,7 +37,7 @@ def extract_markdown_from_str(text: str) -> str:
     return "\n".join(markdown_lines)
 
 
-def create_awesome_markdown() -> None:
+def create_and_save_awesome_list(keyword: str, data: dict) -> None:
     """Create a markdown file as keyword.md created by chatgpt"""
     chatgpt_client = ChatApp(
         os.path.join(
@@ -52,7 +46,7 @@ def create_awesome_markdown() -> None:
             "awesome_list_context.json",
         )
     )
-    append_data_to_chatgpt_client_messages(chatgpt_client)
+    append_data_to_chatgpt_client_messages(chatgpt_client, data)
     response = chatgpt_client.send_messages()
 
     markdown_content = extract_markdown_from_str(response)
@@ -65,5 +59,12 @@ def create_awesome_markdown() -> None:
 
 
 if __name__ == "__main__":
-    # Set the global variables keyword and description to create a new awesome list.
-    create_awesome_markdown()
+    # Set these two keys to create a new awesome list
+    k = "Data Version Control (DVC)"
+    d = """Data Version Control is a free, open-source tool for data management, 
+    ML pipeline automation, and experiment management. This helps data science and machine 
+    learning teams manage large datasets, make projects reproducible, and collaborate better
+    """
+
+    data = get_awesome_list_input_data(k, d)
+    create_and_save_awesome_list(k, data)
