@@ -6,11 +6,11 @@ import re
 from utils import get_project_root
 
 # Set these two keys to create a new awesome list
-keyword = "Auto-GPT"
-description = """Auto-GPT is an experimental open-source application showcasing the " \
-              "capabilities of the GPT-4 language model. This program, driven by " \
-              "GPT-4, chains together LLM "thoughts", to autonomously achieve 
-              whatever goal you set."""
+keyword = "Data Version Control (DVC)"
+description = """Data Version Control is a free, open-source tool for data management, 
+ML pipeline automation, and experiment management. This helps data science and machine 
+learning teams manage large datasets, make projects reproducible, and collaborate better
+"""
 
 
 def get_awesome_list_input_data() -> dict:
