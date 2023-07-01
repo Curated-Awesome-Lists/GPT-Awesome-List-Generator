@@ -1,9 +1,9 @@
-from connections import github, google_scholar, podcast, youtube
+from data_pipelines import github, google_scholar, podcast, youtube
 from connections.chatgpt import ChatApp
 import os
 import re
 
-from utils import get_project_root
+from utils import get_root_directory
 
 
 def get_awesome_list_input_data(keyword: str, description: str) -> dict:
@@ -51,7 +51,7 @@ def create_and_save_awesome_list(keyword: str, data: dict) -> None:
 
     markdown_content = extract_markdown_from_str(response)
     file_name = f"{keyword}.md"
-    path = get_project_root() / "output" / file_name
+    path = get_root_directory() / "output" / file_name
     with open(path, "w") as f:
         f.write(markdown_content)
 

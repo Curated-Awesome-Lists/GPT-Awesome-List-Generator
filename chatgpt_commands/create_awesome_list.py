@@ -1,6 +1,6 @@
 from typing import List
 
-from connections import github, google_scholar
+from data_pipelines import github
 
 
 def get_create_awsome_list_command(

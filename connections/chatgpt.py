@@ -3,7 +3,7 @@ import os
 import openai
 from dotenv import load_dotenv
 
-from utils import get_project_root
+from utils import get_root_directory
 
 load_dotenv()
 
@@ -27,7 +27,7 @@ class ChatApp:
 
 if __name__ == "__main__":
     chatgpt_client = ChatApp(
-        get_project_root()
+        get_root_directory()
         / "connections"
         / "chatgpt_setup_data"
         / "awesome_list_context.json",
