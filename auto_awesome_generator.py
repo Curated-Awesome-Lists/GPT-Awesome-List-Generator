@@ -65,7 +65,7 @@ def get_prompt(data_type: str, sort_metric: str, keywords: str, description: str
 
     I want you to:
 
-    1. Filter the {data_type}, retaining only those that are most pertinent to the keyword and its associated description.
+    1. Filter the {data_type}, retaining only those that are relevant to the keyword and its associated description. 
     2. Prioritize the filtered entries based on their relevance and {sort_metric}.
     3. Generate an 'Awesome List' section for these {data_type} in markdown format.
     4. Generate the list starting with section name to be the data type as a markdown header (e.g. ## {data_type}), then list the items in mardown style as points.
@@ -153,4 +153,4 @@ if __name__ == "__main__":
     k = "Auto-GPT"
     d = """Auto-GPT is an experimental open-source application showcasing the capabilities of the GPT-4 language model. This program, driven by GPT-4, chains together LLM "thoughts", to autonomously achieve whatever goal you set. As one of the first examples of GPT-4 running fully autonomously, Auto-GPT pushes the boundaries of what is possible with AI.
     """
-    generate_awesome_list(k, d, 'gpt-4')
+    generate_awesome_list(k, d)
