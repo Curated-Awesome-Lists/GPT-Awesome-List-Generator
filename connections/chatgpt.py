@@ -1,28 +1,25 @@
 import json
-import os
+
 import openai
-from dotenv import load_dotenv
 
 from utils import get_root_directory
 
-load_dotenv()
-
 
 class ChatApp:
-    def __init__(self, setup_file_path):
-        openai.api_key = os.getenv("OPENAI_API_KEY")
+    def __init__(self, setup_file_path, api_key: str):
+        openai.api_key = api_key
         with open(setup_file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
         self.messages = data
 
     # "gpt-3.5-turbo" or "gpt-4"
     def send_messages(self, model="gpt-3.5-turbo", tries=1):
-        response = openai.ChatCompletion.create(
+        completion = openai.ChatCompletion.create(
             model=model,
             messages=self.messages,
             n=tries,  # how many chat completion choices
         )
-        return response["choices"][0]["message"].content
+        return completion
 
 
 if __name__ == "__main__":
