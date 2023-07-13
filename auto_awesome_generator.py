@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 from connections.chatgpt import ChatApp
 from data_pipelines import github, google_scholar, podcast, youtube
-from utils import get_root_directory
+from utils import get_root_directory, extract_bullets
 
 
 def create_awesome_markdown_section(section_title: str, items: list[Dict[str, str]]):
@@ -21,13 +21,17 @@ def create_awesome_markdown_section(section_title: str, items: list[Dict[str, st
         "sorting_metric_value": "sorting_metric_value: e.g. 100, 1000, etc."
     }
     """
+    # make sure items not None or not array
+    if not items or not isinstance(items, list):
+        return ""
     # Convert items from JSON to Python
     # items = json.loads(items)
     # sort the items based on the sorting metric
     try:
-        items = sorted(items, key=lambda x: x.get("sorting_metric_value"), reverse=True)
+        sorted_items = sorted(items, key=lambda x: x.get("sorting_metric_value"), reverse=True)
     except Exception as e:
         print(f"Failed to sort the items: {e}")
+        sorted_items = items
     # create the markdown section
     markdown_section = f"## {section_title}\n"
     for item in items:
@@ -87,8 +91,7 @@ def get_prompt(data_type: str, sort_metric: str, keywords: str, description: str
     I want you to:
 
     1. Filter the '{data_type}', retaining only those that are relevant to the keyword and its associated description. 
-    2. return as a list of items where item is a dict with following fields: '"title": "item_title", "link": "item_link", "description": "item_description", "sorting_metric": "item_sorting_metric, e.g. stars, views, etc." , "item_sorting_metric_value": "sorting_metric_value: e.g. 100, 1000, etc." 
-    3. do not add any additional text, only items as array of dictionaries.
+    2. return the filtered '{data_type}' as an interesting markdown Unordered list.  
     """
     return [
         {
@@ -116,23 +119,26 @@ def extract_json_array(s):
         return None
 
 
-def generate_markdown_per_data_type(data_types_info: dict, chatgpt_client: ChatApp, model: str = "gpt-3.5-turbo") -> \
-        Dict[
-            str, str]:
+def generate_markdown_per_data_type(data_types_info: dict, chatgpt_client: ChatApp, model: str = "gpt-3.5-turbo",
+                                    batch_size: int = 10) -> Dict[str, str]:
     """Generate a markdown for each data type separately"""
     markdown_contents = {}
     for key, value in data_types_info.items():
         prompt_messages = value["prompt"]
         extracted_data = value["data"]
-        data_message = {"role": "user",
-                        "content": f"Ok, I will provide the data , please send the response as ONLY an array of items as described before. Data for '{key}' is: {extracted_data}"}
-        chatgpt_client.messages.extend(prompt_messages)
-        chatgpt_client.messages.append(data_message)
-        completion = chatgpt_client.send_messages(model=model)
-        completion = completion["choices"][0]["message"].content
-        array = extract_json_array(completion)
-        section = create_awesome_markdown_section(key, array)
-        markdown_contents[key] = section
+        bullet_points = ''
+        # Process data in batches
+        for i in range(0, len(extracted_data), batch_size):
+            batch_data = extracted_data[i:i + batch_size]
+            data_message = {"role": "user",
+                            "content": f"Ok, I will provide the data, please send the response ONLY as a markdown Unordered list. data for '{key}' is: {batch_data}"}
+            chatgpt_client.messages.extend(prompt_messages)
+            chatgpt_client.messages.append(data_message)
+            completion = chatgpt_client.send_messages(model=model)
+            completion = completion["choices"][0]["message"].content
+            batch_bullet_points = extract_bullets(completion)
+            bullet_points += batch_bullet_points + '\n'
+        markdown_contents[key] = bullet_points
     return markdown_contents
 
 
@@ -140,6 +146,7 @@ def merge_markdown_contents(markdown_contents: Dict[str, str]) -> str:
     """Merge the markdown contents into one markdown"""
     markdown = ""
     for key, value in markdown_contents.items():
+        markdown += f"## {key}\n"
         markdown += value + "\n"
     return markdown
 
@@ -160,22 +167,23 @@ def generate_awesome_list(keywords: str, description: str, model: str = "gpt-3.5
         ),
         api_key=os.environ["OPENAI_API_KEY"],
     )
+    number_of_results = 40
     data_types_info = {
         "Github Projects": {
             "prompt": github_prompt,
-            "data": github.get_github_search_results(keywords, 40)
+            "data": github.get_github_search_results(keywords, number_of_results)
         },
         "Youtube Videos": {
             "prompt": youtube_prompt,
-            "data": youtube.search_youtube(keywords, 40)
+            "data": youtube.search_youtube(keywords, number_of_results)
         },
         "Google Scholars": {
             "prompt": google_scholar_prompt,
-            "data": google_scholar.scrape_google_scholar(keywords)
+            "data": google_scholar.scrape_google_scholar(keywords, number_of_results)
         },
         "Podcasts": {
             "prompt": podcast_prompt,
-            "data": podcast.get_podcasts(keywords, 40)
+            "data": podcast.get_podcasts(keywords, number_of_results)
         }
     }
     markdown_contents = generate_markdown_per_data_type(data_types_info, chatgpt_client, model)
@@ -187,4 +195,4 @@ if __name__ == "__main__":
     k = "Auto-GPT"
     d = """Auto-GPT is an experimental open-source application showcasing the capabilities of the GPT-4 language model. This program, driven by GPT-4, chains together LLM "thoughts", to autonomously achieve whatever goal you set. As one of the first examples of GPT-4 running fully autonomously, Auto-GPT pushes the boundaries of what is possible with AI.
     """
-    generate_awesome_list(k, d, 'gpt-3.5-turbo-16k-0613')
+    generate_awesome_list(k, d, 'gpt-3.5-turbo-16k')

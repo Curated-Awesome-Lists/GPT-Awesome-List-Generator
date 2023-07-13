@@ -1,47 +1,63 @@
-import re
-
-import numpy as np
-import pandas as pd
 import requests
 from bs4 import BeautifulSoup
+import re
 
 
-def scrape_google_scholar(keyword: str) -> list[dict]:
-    url = "https://scholar.google.com/scholar?q=" + keyword
+def scrape_google_scholar(keyword, num_results=100):
+    """Scrapes Google Scholar for search results for the specified keyword.
 
-    headers = {"User-Agent": "Mozilla/5.0"}
-    response = requests.get(url, headers=headers)
+    Args:
+      keyword: The keyword to search for.
+      num_results: The desired number of results. Default is 100.
 
-    soup = BeautifulSoup(response.text, "html.parser")
+    Returns:
+      A list of dictionaries, each representing a search result. Each dictionary
+      contains the title, brief description, link, and number of citations for the
+      search result.
+    """
 
-    search_results = soup.find_all("div", {"class": "gs_ri"})
+    results = []
+    start = 0
 
-    data = []
-    for result in search_results:
-        title = result.h3.text if result.h3 else ""
-        link = result.h3.a["href"] if result.h3.a and "href" in result.h3.a.attrs else ""
-        description = (
-            result.find("div", {"class": "gs_rs"}).text
-            if result.find("div", {"class": "gs_rs"})
-            else ""
-        )
-        citation_info = (
-            result.find("div", {"class": "gs_fl"}).text
-            if result.find("div", {"class": "gs_fl"})
-            else ""
-        )
+    while len(results) < num_results:
+        url = f"https://scholar.google.com/scholar?hl=en&q={keyword}&start={start}"
+        response = requests.get(url)
+        soup = BeautifulSoup(response.content, "html.parser")
 
-        # Extract citation count from the citation info
-        citation_count_match = re.search(r"Cited by (\d+)", citation_info)
-        citation_count = (
-            int(citation_count_match.group(1)) if citation_count_match else np.nan
-        )
+        for result in soup.find_all("div", class_="gs_ri"):
+            title = result.find("h3", class_="gs_rt").text
+            description = result.find("div", class_="gs_rs").text
+            link = (
+                result.h3.a["href"] if result.h3.a and "href" in result.h3.a.attrs else ""
+            )
 
-        data.append([title, link, description, citation_count])
+            # Use regex to find the "Cited by" link
+            citations = result.find("a", text=re.compile(r"Cited by"))
+            if citations:
+                citations_text = citations.text
+                cited_by = int(re.search(r'\d+', citations_text).group())
+            else:
+                cited_by = 0
 
-    df = pd.DataFrame(data, columns=["Title", "Link", "Description", "Citation Count"])
-    df = df.dropna(axis=1, how="all")
-    return df.to_dict(orient="records")
+            result_dict = {
+                "title": title,
+                "description": description,
+                "link": link,
+                "citations": cited_by,
+            }
+            results.append(result_dict)
+
+            # Break the loop if we have enough results
+            if len(results) >= num_results:
+                break
+
+        # Go to the next page of results
+        start += 10
+
+    # Trim results to desired length in case we have too many
+    results = results[:num_results]
+
+    return results
 
 
 if __name__ == "__main__":
