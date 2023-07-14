@@ -1,6 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 import re
+import time
+import random
 
 
 def scrape_google_scholar(keyword, num_results=100):
@@ -22,6 +24,7 @@ def scrape_google_scholar(keyword, num_results=100):
     while len(results) < num_results:
         url = f"https://scholar.google.com/scholar?hl=en&q={keyword}&start={start}"
         response = requests.get(url)
+        time.sleep(random.uniform(1, 3))
         soup = BeautifulSoup(response.content, "html.parser")
 
         for result in soup.find_all("div", class_="gs_ri"):
