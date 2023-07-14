@@ -1,7 +1,7 @@
 import requests
 
 
-def get_github_search_results(keyword: str) -> list[dict]:
+def get_github_search_results(keyword: str, count: int = 5) -> list[dict]:
     url = f"https://api.github.com/search/repositories?q={keyword}"
     response = requests.get(url)
 
@@ -18,7 +18,7 @@ def get_github_search_results(keyword: str) -> list[dict]:
             results.append(repo_info)
 
         results = sorted(results, key=lambda x: x["stars"], reverse=True)
-        return results[:10]
+        return results[:count]
     else:
         print(f"Failed to get data, status code: {response.status_code}")
         return [{}]
