@@ -146,7 +146,7 @@ def merge_markdown_contents(markdown_contents: Dict[str, str]) -> str:
     """Merge the markdown contents into one markdown"""
     markdown = ""
     for key, value in markdown_contents.items():
-        markdown += f"## {key}\n"
+        markdown += f"## {key}\n\n"
         markdown += value + "\n"
     return markdown
 
