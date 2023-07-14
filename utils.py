@@ -1,5 +1,4 @@
 import os
-import re
 from functools import wraps
 from pathlib import Path
 from time import time
@@ -36,9 +35,10 @@ def extract_markdown_from_str(text: str) -> str:
     return "\n".join(markdown_lines)
 
 
-def extract_bullets(markdown_string):
+def extract_bullets_from_markdown(markdown: str) -> str:
+    """Returns a string containing only the bullet points from a markdown"""
     # Split the text into paragraphs
-    paragraphs = re.split("\n\s*\n", markdown_string)
+    paragraphs = re.split("\n\s*\n", markdown)
 
     # Initialize an empty list to store the list items
     list_items = []
@@ -47,7 +47,8 @@ def extract_bullets(markdown_string):
     for paragraph in paragraphs:
         # Split the paragraph into lines
         lines = paragraph.split("\n")
-        # If the first line of the paragraph starts with a list marker, add the entire paragraph to the list items
+        # If the first line of the paragraph starts with a list marker,
+        # add the entire paragraph to the list items
         if re.match("^\s*(\d+\.\s+|\-\s+|\*\s+|\+\s+).*", lines[0]):
             list_items.append(paragraph)
 
@@ -70,6 +71,15 @@ if __name__ == "__main__":
 
     Please note that the list is sorted by the number of stars each project has received."""
 
-    bullet_points_as_string = extract_bullets(markdown_text)
+    bullet_points_as_string = extract_bullets_from_markdown(markdown_text)
 
     print(bullet_points_as_string)
+
+
+def save_markdown(file_name: str, markdown_content: str) -> None:
+    """Save the markdown content as a file in the output directory"""
+    path = get_root_directory() / "output" / file_name
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(markdown_content)
+
+    print(f"Markdown file {file_name} created successfully.")

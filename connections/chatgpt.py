@@ -12,7 +12,7 @@ class ChatApp:
             data = json.load(f)
         self.messages = data
 
-    # "gpt-4-32k", "gpt-4-0613"
+    # "gpt-4-32k", or "gpt-4-0613"
     def send_messages(self, model="gpt-3.5-turbo-16k-0613", tries=1):
         completion = openai.ChatCompletion.create(
             model=model,

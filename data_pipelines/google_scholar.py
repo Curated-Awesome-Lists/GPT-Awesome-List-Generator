@@ -1,8 +1,9 @@
-import requests
-from bs4 import BeautifulSoup
+import random
 import re
 import time
-import random
+
+import requests
+from bs4 import BeautifulSoup
 
 
 def scrape_google_scholar(keyword, num_results=100):
@@ -31,14 +32,16 @@ def scrape_google_scholar(keyword, num_results=100):
             title = result.find("h3", class_="gs_rt").text
             description = result.find("div", class_="gs_rs").text
             link = (
-                result.h3.a["href"] if result.h3.a and "href" in result.h3.a.attrs else ""
+                result.h3.a["href"]
+                if result.h3.a and "href" in result.h3.a.attrs
+                else ""
             )
 
             # Use regex to find the "Cited by" link
             citations = result.find("a", text=re.compile(r"Cited by"))
             if citations:
                 citations_text = citations.text
-                cited_by = int(re.search(r'\d+', citations_text).group())
+                cited_by = int(re.search(r"\d+", citations_text).group())
             else:
                 cited_by = 0
 
@@ -50,14 +53,11 @@ def scrape_google_scholar(keyword, num_results=100):
             }
             results.append(result_dict)
 
-            # Break the loop if we have enough results
             if len(results) >= num_results:
                 break
 
         # Go to the next page of results
         start += 10
-
-    # Trim results to desired length in case we have too many
     results = results[:num_results]
 
     return results
