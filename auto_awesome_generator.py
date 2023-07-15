@@ -137,6 +137,7 @@ def generate_markdown_per_data_type(
         of tokens used during generation.
     """
     markdown_contents = {}
+    initial_chatgpt_client_messages = chatgpt_client.messages.copy()
     total_tokens = 0
 
     for key, value in data_types_info.items():
@@ -150,6 +151,9 @@ def generate_markdown_per_data_type(
                 "role": "user",
                 "content": f"Ok, I will provide the data, please send the response ONLY as a markdown Unordered list. data for '{key}' is: {batch_data}",
             }
+
+            # reset chatgpt client messages
+            chatgpt_client.messages = initial_chatgpt_client_messages.copy()
 
             chatgpt_client.messages.extend(prompt_messages)
             chatgpt_client.messages.append(data_message)
