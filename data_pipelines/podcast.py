@@ -1,6 +1,9 @@
 import podsearch
 
+from utils import timing
 
+
+@timing
 def get_podcasts(keyword: str, max_results: int = 5) -> list[dict]:
     results = podsearch.search(keyword, country="us", limit=max_results)
     podcasts = []

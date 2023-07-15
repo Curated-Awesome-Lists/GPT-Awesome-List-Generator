@@ -1,6 +1,9 @@
 import requests
 
+from utils import timing
 
+
+@timing
 def get_github_search_results(keyword: str, count: int = 5) -> list[dict]:
     url = f"https://api.github.com/search/repositories?q={keyword}"
     response = requests.get(url)

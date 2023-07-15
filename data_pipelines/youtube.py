@@ -1,6 +1,9 @@
 from youtubesearchpython import VideosSearch
 
+from utils import timing
 
+
+@timing
 def search_youtube(keyword: str, limit: int = 5) -> list[dict]:
     videos_search = VideosSearch(keyword, limit=limit)
     results = videos_search.result()

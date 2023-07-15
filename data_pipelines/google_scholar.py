@@ -1,11 +1,15 @@
 import random
 import re
 import time
+from functools import lru_cache
 
 import requests
 from bs4 import BeautifulSoup
 
+from utils import timing
 
+
+@timing
 def scrape_google_scholar(keyword, num_results=100):
     """Scrapes Google Scholar for search results for the specified keyword.
 
