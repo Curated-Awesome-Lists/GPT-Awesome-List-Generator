@@ -1,17 +1,17 @@
 import json
 import os
 import re
-from typing import Dict, Optional
+from typing import Optional, Tuple
 
 from dotenv import load_dotenv
 
 from connections.chatgpt import ChatApp
 from data_pipelines import github, google_scholar, podcast, youtube
-from utils import extract_bullets_from_markdown, save_markdown
+from utils import extract_bullets_from_markdown, save_markdown, timing
 
 
 def create_awesome_markdown_section(
-    section_title: str, items: list[Dict[str, str]]
+    section_title: str, items: list[dict[str, str]]
 ) -> str:
     """Create a markdown section for the list of items
     each item in 'items' should follow the following format:
@@ -110,36 +110,64 @@ def extract_json_array(s: str) -> Optional[list[any]]:
         return None
 
 
+@timing
 def generate_markdown_per_data_type(
-    data_types_info: dict,
+    data_types_info: dict[str, dict[str, any]],
     chatgpt_client: ChatApp,
     model: str = "gpt-3.5-turbo",
     batch_size: int = 10,
-) -> Dict[str, str]:
-    """Generate a markdown for each data type separately"""
+) -> Tuple[dict[str, str], dict[str, int]]:
+    """Generate a markdown for each data type separately.
+
+    Args:
+        data_types_info: A dictionary containing information about each data type.
+            The keys represent the data type, and the values are dictionaries with
+            "prompt" and "data" keys. The "prompt" value is a list of strings
+            representing prompt messages. The "data" value is a list of data to
+            process.
+        chatgpt_client: An instance of the ChatApp class for interacting with the
+            ChatGPT API.
+        model: The model to use for generating markdown. Defaults to "gpt-3.5-turbo".
+        batch_size: The number of data items to process in each batch. Defaults to 10.
+
+    Returns:
+        A tuple containing two dictionaries. The first dictionary maps each data type
+        to its corresponding generated markdown. The second dictionary contains the
+        usage information, with the "total_tokens" key representing the total number
+        of tokens used during generation.
+    """
     markdown_contents = {}
+    total_tokens = 0
+
     for key, value in data_types_info.items():
         prompt_messages = value["prompt"]
         extracted_data = value["data"]
         bullet_points = ""
-        # Process data in batches
+
         for i in range(0, len(extracted_data), batch_size):
             batch_data = extracted_data[i : i + batch_size]
             data_message = {
                 "role": "user",
                 "content": f"Ok, I will provide the data, please send the response ONLY as a markdown Unordered list. data for '{key}' is: {batch_data}",
             }
+
             chatgpt_client.messages.extend(prompt_messages)
             chatgpt_client.messages.append(data_message)
             completion = chatgpt_client.send_messages(model=model)
-            completion = completion["choices"][0]["message"].content
-            batch_bullet_points = extract_bullets_from_markdown(completion)
-            bullet_points += batch_bullet_points + "\n"
+            total_tokens += completion.usage.total_tokens
+
+            response_message = completion["choices"][0]["message"].content
+            batch_bullet_points = extract_bullets_from_markdown(response_message)
+            bullet_points = bullet_points + batch_bullet_points + "\n"
+
         markdown_contents[key] = bullet_points
-    return markdown_contents
+
+    usage_info = {"total_tokens": total_tokens}
+
+    return markdown_contents, usage_info
 
 
-def merge_markdown_contents(markdown_contents: Dict[str, str]) -> str:
+def merge_markdown_contents(markdown_contents: dict[str, str]) -> str:
     """Merge the markdown contents into one markdown"""
     markdown = ""
     for key, value in markdown_contents.items():
@@ -193,7 +221,7 @@ def generate_awesome_list(
             "data": podcast.get_podcasts(keywords, number_of_results),
         },
     }
-    markdown_contents = generate_markdown_per_data_type(
+    markdown_contents, _ = generate_markdown_per_data_type(
         data_types_info, chatgpt_client, model
     )
     merged_markdown = merge_markdown_contents(markdown_contents)
