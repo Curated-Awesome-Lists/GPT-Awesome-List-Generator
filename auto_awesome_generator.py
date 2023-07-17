@@ -1,7 +1,5 @@
-import json
 import os
-import re
-from typing import Optional, Tuple
+from typing import Tuple
 
 from dotenv import load_dotenv
 
@@ -10,72 +8,7 @@ from data_pipelines import github, google_scholar, podcast, youtube
 from utils import extract_bullets_from_markdown, save_markdown, timing
 
 
-def create_awesome_markdown_section(
-    section_title: str, items: list[dict[str, str]]
-) -> str:
-    """Create a markdown section for the list of items
-    each item in 'items' should follow the following format:
-    {
-        "title": "title",
-        "link": "link",
-        "description": "description",
-        "sorting_metric": "sorting_metric: e.g. stars, views, etc." ,
-        "sorting_metric_value": "sorting_metric_value: e.g. 100, 1000, etc."
-    }
-    """
-    if not items or not isinstance(items, list):
-        return ""
-    # sort items based on the sorting metric
-    try:
-        sorted_items = sorted(
-            items, key=lambda x: x.get("sorting_metric_value"), reverse=True
-        )
-    except Exception as e:
-        print(f"Failed to sort the items: {e}")
-        sorted_items = items
-    # create the markdown section
-    markdown_section = f"## {section_title}\n"
-    for item in sorted_items:
-        title = item.get("title", "")
-        link = item.get("link", "")
-        description = item.get("description", "")
-        sorting_metric = item.get("sorting_metric", "")
-        sorting_metric_value = item.get("sorting_metric_value", "")
-        markdown_section += f"- [{title}]({link}): {description}\n"
-        # add the sorting metric value between brackets with an emoji
-        if sorting_metric == "stars":
-            markdown_section += f"  - :star: {sorting_metric}: {sorting_metric_value}\n"
-        elif sorting_metric == "views":
-            markdown_section += f"  - :eyes: {sorting_metric}: {sorting_metric_value}\n"
-        else:
-            markdown_section += f"  - {sorting_metric}: {sorting_metric_value}\n"
-
-    return markdown_section
-
-
-functions = [
-    {
-        "name": "create_awesome_markdown_section",
-        "description": "Create a markdown section for the list of items",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "section_title": {
-                    "type": "string",
-                    "description": "The title of the section",
-                },
-                "items": {
-                    "type": "string",
-                    "description": """JSON string of a list of items to be included in the section, item is a dictionary as follow: { "title": "title", "link": "link", "description": "description", "sorting_metric": "sorting_metric: e.g. stars, views, etc." , "sorting_metric_value": "sorting_metric_value: e.g. 100, 1000, etc." } """,
-                },
-            },
-            "required": ["section_title", "items"],
-        },
-    }
-]
-
-
-def get_prompt(
+def get_prompt_per_data_type(
     keywords: str, description: str, data_type: str, sort_metric: str
 ) -> list[dict]:
     prompt = f"""
@@ -95,20 +28,6 @@ def get_prompt(
             "content": f"Ok. Provide me with the unfiltered '{data_type}'.",
         },
     ]
-
-
-def extract_json_array(s: str) -> Optional[list[any]]:
-    match = re.search(r"\[.*\]", s, re.DOTALL)
-    if not match:
-        print("No JSON array found in the input string.")
-        return None
-
-    array_str = match.group()
-    try:
-        return json.loads(array_str)
-    except json.JSONDecodeError as e:
-        print(f"Could not decode JSON array: {e}")
-        return None
 
 
 @timing
@@ -220,62 +139,57 @@ def generate_awesome_list_markdown(
     return response_message, total_tokens
 
 
-def generate_awesome_list(
-    keywords: str,
+def save_and_return_awesome_list(
+    keyword: str,
     description: str,
     model: str = "gpt-3.5-turbo-16k-0613",
     num_results=20,
 ) -> Tuple[str, dict]:
-    github_prompt = get_prompt(
-        keywords, description, "GitHub projects", "the number of stars"
-    )
-    youtube_prompt = get_prompt(
-        keywords, description, "YouTube videos", "the number of views"
-    )
-    google_scholar_prompt = get_prompt(
-        keywords,
-        description,
-        "Google Scholar papers",
-        "number of citations else relevance",
-    )
-    podcast_prompt = get_prompt(keywords, description, "podcasts", "their relevance")
-
+    """
+    Performs a search for specified keywords across multiple data types, like GitHub
+    projects, YouTube videos, Google Scholar papers, and podcasts. Then fetches the
+    relevant data and utilizes ChatGPT to filter and craft a markdown section for each
+    data type. Finally, it combines them to generate a comprehensive 'Awesome List'
+    in Markdown format
+    """
     load_dotenv()
+    data_types = [
+        ("GitHub projects", "the number of stars", github.get_github_search_results),
+        ("YouTube videos", "the number of views", youtube.search_youtube),
+        (
+            "Google Scholar papers",
+            "number of citations else relevance",
+            google_scholar.scrape_google_scholar,
+        ),
+        ("podcasts", "their relevance", podcast.get_podcasts),
+    ]
+    data_types_info = {
+        dt[0]: {
+            "prompt": get_prompt_per_data_type(keyword, description, dt[0], dt[1]),
+            "data": dt[2](keyword, num_results),
+        }
+        for dt in data_types
+    }
+
     chatgpt_client = ChatApp(
         os.path.join(
-            os.path.dirname(os.path.realpath(__file__)) + "/connections",
+            os.path.dirname(os.path.realpath(__file__)),
+            "connections",
             "chatgpt_setup_data",
             "awesome_list_context.json",
         ),
         api_key=os.environ["OPENAI_API_KEY"],
     )
-    data_types_info = {
-        "Github Projects": {
-            "prompt": github_prompt,
-            "data": github.get_github_search_results(keywords, num_results),
-        },
-        "Youtube Videos": {
-            "prompt": youtube_prompt,
-            "data": youtube.search_youtube(keywords, num_results),
-        },
-        "Google Scholars": {
-            "prompt": google_scholar_prompt,
-            "data": google_scholar.scrape_google_scholar(keywords, num_results),
-        },
-        "Podcasts": {
-            "prompt": podcast_prompt,
-            "data": podcast.get_podcasts(keywords, num_results),
-        },
-    }
+
     markdown_contents, markdown_per_data_tokens = generate_markdown_per_data_type(
         data_types_info, chatgpt_client, model
     )
     merged_markdown = merge_markdown_contents(markdown_contents)
     awesome_list_markdown, awesome_list_tokens = generate_awesome_list_markdown(
-        merged_markdown, keywords, description
+        merged_markdown, keyword, description
     )
     usage_info = {"total_tokens": awesome_list_tokens + markdown_per_data_tokens}
-    save_markdown(f"{k}.md", awesome_list_markdown)
+    save_markdown(f"{keyword}.md", awesome_list_markdown)
     return awesome_list_markdown, usage_info
 
 
@@ -283,4 +197,4 @@ if __name__ == "__main__":
     k = "Auto-GPT"
     d = """Auto-GPT is an experimental open-source application showcasing the capabilities of the GPT-4 language model. This program, driven by GPT-4, chains together LLM "thoughts", to autonomously achieve whatever goal you set. As one of the first examples of GPT-4 running fully autonomously, Auto-GPT pushes the boundaries of what is possible with AI.
     """
-    _, _ = generate_awesome_list(k, d, "gpt-3.5-turbo-16k")
+    _, _ = save_and_return_awesome_list(k, d, "gpt-3.5-turbo-16k")

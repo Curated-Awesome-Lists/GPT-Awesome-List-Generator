@@ -58,6 +58,15 @@ def extract_bullets_from_markdown(markdown: str) -> str:
     return bullet_points_as_string
 
 
+def save_markdown(file_name: str, markdown_content: str) -> None:
+    """Save the markdown content as a file in the output directory"""
+    path = get_root_directory() / "output" / file_name
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(markdown_content)
+
+    print(f"Markdown file {file_name} created successfully.")
+
+
 if __name__ == "__main__":
     import re
 
@@ -75,12 +84,3 @@ if __name__ == "__main__":
     bullet_points_as_string = extract_bullets_from_markdown(markdown_text)
 
     print(bullet_points_as_string)
-
-
-def save_markdown(file_name: str, markdown_content: str) -> None:
-    """Save the markdown content as a file in the output directory"""
-    path = get_root_directory() / "output" / file_name
-    with open(path, "w", encoding="utf-8") as f:
-        f.write(markdown_content)
-
-    print(f"Markdown file {file_name} created successfully.")
