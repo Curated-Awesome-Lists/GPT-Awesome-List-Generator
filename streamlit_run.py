@@ -51,7 +51,7 @@ def reset_session_state() -> None:
 
 @timing
 def generate_response(keyword: str, description: str, model: str) -> Tuple[str, Dict[str, int]]:
-    awesome_list_generator = AwesomeListGenerator(keyword, description, model, 10)
+    awesome_list_generator = AwesomeListGenerator(keyword, description, model, 10, 40)
     response, usage_info = awesome_list_generator.save_and_return_awesome_list()
     return response, usage_info
 

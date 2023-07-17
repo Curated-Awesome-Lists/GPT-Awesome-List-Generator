@@ -7,7 +7,8 @@ from utils import timing, extract_bullets_from_markdown
 
 class SectionMarkdownGenerator:
 
-    def __init__(self):
+    def __init__(self, model):
+        self.model = model
         self.client = ChatApp(
             os.path.join(
                 os.path.dirname(os.path.realpath(__file__)),
@@ -19,7 +20,7 @@ class SectionMarkdownGenerator:
         )
 
     @timing
-    def generate_markdown(self, data_types_info: dict, model: str, batch_size: int) -> Tuple[dict[str, str], float]:
+    def generate_markdown(self, data_types_info: dict, batch_size: int) -> Tuple[dict[str, str], float]:
         markdown_contents = {}
         total_tokens = 0
 
@@ -38,7 +39,7 @@ class SectionMarkdownGenerator:
                 }
                 self.client.messages.extend(prompt_messages)
                 self.client.messages.append(data_message)
-                completion = self.client.send_messages(model=model)
+                completion = self.client.send_messages(model=self.model)
                 total_tokens += completion.usage.total_tokens
 
                 response_message = completion["choices"][0]["message"].content

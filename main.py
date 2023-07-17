@@ -7,4 +7,4 @@ if __name__ == "__main__":
     markdown_generator = AwesomeListGenerator(keyword, description, model="gpt-3.5-turbo-16k",
                                               data_extraction_batch_size=10)
 
-    _, _ = markdown_generator.save_and_return_awesome_list()
+    _ = markdown_generator.save_and_return_awesome_list()
