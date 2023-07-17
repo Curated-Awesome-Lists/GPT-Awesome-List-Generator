@@ -79,13 +79,14 @@ def get_prompt(
     keywords: str, description: str, data_type: str, sort_metric: str
 ) -> list[dict]:
     prompt = f"""
-    I am going to provide you with a list of '{data_type}' related to the keyword '{keywords}' and its description "{description}". 
-    These '{data_type}' are sorted by '{sort_metric}'.
-
-    I want you to:
-
-    1. Filter the '{data_type}', retaining only those that are relevant to the keyword and its associated description. 
-    2. return the filtered '{data_type}' as an interesting markdown Unordered list.  
+    I will provide a list of elements categorized as '{data_type}', each associated with a specific keyword '{keywords}' and an accompanying description "{description}". These elements are sorted based on '{sort_metric}'.
+    
+    Please perform the following tasks:
+    1. Review the '{data_type}' and retain only those that are directly relevant to the given keyword and its respective description. 
+    2. Format the filtered '{data_type}' into a visually appealing markdown unordered list. 
+    3. Enhance the list's aesthetics and clarity for import into a markdown editor by adding an appropriate emoji next to each element, next to its '{sort_metric}' value.
+    4. Ensure that the description of each item on the list is concise and coherent ideally 2-3 sentences long.
+"
     """
     return [
         {"role": "user", "content": prompt},
@@ -147,7 +148,6 @@ def generate_markdown_per_data_type(
             print(f"No data found for '{key}'.")
             continue
         bullet_points = ""
-
         for i in range(0, len(extracted_data), batch_size):
             batch_data = extracted_data[i : i + batch_size]
             data_message = {
@@ -199,9 +199,8 @@ def generate_awesome_list_markdown(
     the given data, following these guidelines:
     1. Design an attractive awesome list with a table of contents and an official resources section at the top.
     2. Filter the official resources from the data using the keyword and description I provided.
-    3. Make the design better. For example, add the star symbol to GitHub stars and the eye symbol to YouTube views.
-    4. DO NOT add any new data to any data section; only use the given data to create the awesome list. 
-    5. If a data section is empty delete it and don't add it to the awesome list
+    3. DO NOT add any new data to any data section; only use the given data to create the awesome list. 
+    4. If a data section is empty delete it and don't add it to the awesome list
     Do you understand?
     """
     second_prompt = f"""Keyword is: {keyword}\nDescription is: {description}\nData in Markdown code is: {data_markdown}"""
@@ -222,8 +221,11 @@ def generate_awesome_list_markdown(
 
 
 def generate_awesome_list(
-    keywords: str, description: str, model: str = "gpt-3.5-turbo-16k-0613"
-):
+    keywords: str,
+    description: str,
+    model: str = "gpt-3.5-turbo-16k-0613",
+    num_results=20,
+) -> Tuple[str, dict]:
     github_prompt = get_prompt(
         keywords, description, "GitHub projects", "the number of stars"
     )
@@ -247,37 +249,38 @@ def generate_awesome_list(
         ),
         api_key=os.environ["OPENAI_API_KEY"],
     )
-    number_of_results = 40
     data_types_info = {
         "Github Projects": {
             "prompt": github_prompt,
-            "data": github.get_github_search_results(keywords, number_of_results),
+            "data": github.get_github_search_results(keywords, num_results),
         },
         "Youtube Videos": {
             "prompt": youtube_prompt,
-            "data": youtube.search_youtube(keywords, number_of_results),
+            "data": youtube.search_youtube(keywords, num_results),
         },
         "Google Scholars": {
             "prompt": google_scholar_prompt,
-            "data": google_scholar.scrape_google_scholar(keywords, number_of_results),
+            "data": google_scholar.scrape_google_scholar(keywords, num_results),
         },
         "Podcasts": {
             "prompt": podcast_prompt,
-            "data": podcast.get_podcasts(keywords, number_of_results),
+            "data": podcast.get_podcasts(keywords, num_results),
         },
     }
-    markdown_contents, _ = generate_markdown_per_data_type(
+    markdown_contents, markdown_per_data_tokens = generate_markdown_per_data_type(
         data_types_info, chatgpt_client, model
     )
     merged_markdown = merge_markdown_contents(markdown_contents)
-    awesome_list_markdown, _ = generate_awesome_list_markdown(
+    awesome_list_markdown, awesome_list_tokens = generate_awesome_list_markdown(
         merged_markdown, keywords, description
     )
+    usage_info = {"total_tokens": awesome_list_tokens + markdown_per_data_tokens}
     save_markdown(f"{k}.md", awesome_list_markdown)
+    return awesome_list_markdown, usage_info
 
 
 if __name__ == "__main__":
     k = "Auto-GPT"
     d = """Auto-GPT is an experimental open-source application showcasing the capabilities of the GPT-4 language model. This program, driven by GPT-4, chains together LLM "thoughts", to autonomously achieve whatever goal you set. As one of the first examples of GPT-4 running fully autonomously, Auto-GPT pushes the boundaries of what is possible with AI.
     """
-    generate_awesome_list(k, d, "gpt-3.5-turbo-16k")
+    _, _ = generate_awesome_list(k, d, "gpt-3.5-turbo-16k")
