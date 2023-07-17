@@ -1,7 +1,7 @@
 import random
 import re
 import time
-from functools import lru_cache
+import warnings
 
 import requests
 from bs4 import BeautifulSoup
@@ -29,6 +29,13 @@ def scrape_google_scholar(keyword, num_results=100):
     while len(results) < num_results:
         url = f"https://scholar.google.com/scholar?hl=en&q={keyword}&start={start}"
         response = requests.get(url)
+        if response.status_code == 429:
+            warnings.warn(
+                "The Google scraper is currently encountering blockages. "
+                "Please attempt again at a later time. In the meantime, "
+                "we will provide the existing results, which may possibly be empty."
+            )
+            return results
         time.sleep(random.uniform(1, 3))
         soup = BeautifulSoup(response.content, "html.parser")
 
