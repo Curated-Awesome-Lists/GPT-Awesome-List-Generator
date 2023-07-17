@@ -7,7 +7,7 @@ articles, YouTube videos, and podcasts. The awesome list is automatically genera
 using GPT models; you can choose between different models to generate the list, such as
 GPT 3.5 or GPT 4.
 
-## Class Usage
+## How to use
 
 The main class used in this project is the `AwesomeListGenerator`. It can be initialized with the following parameters:
 
