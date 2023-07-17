@@ -5,6 +5,45 @@ from time import time
 import re
 
 
+def _normalize_markdown_list(markdown_string):
+    """
+    Function to normalize a markdown string by converting ordered lists to unordered lists and removing unnecessary newlines.
+
+    Args:
+        markdown_string (str): The input markdown string to normalize.
+
+    Returns:
+        str: The normalized markdown string where all ordered lists have been converted to unordered lists and unnecessary newlines have been removed.
+    """
+
+    # Split the markdown string into lines
+    lines = markdown_string.split("\n")
+
+    # Initialize an empty list to hold the normalized lines
+    normalized_lines = []
+
+    # Iterate over the lines
+    for line in lines:
+        # Remove leading and trailing whitespace
+        line = line.strip()
+
+        # Skip if line is empty
+        if not line:
+            continue
+
+        # Check if the line is an ordered list item
+        if re.match(r"\d+\.", line):
+            # Convert the ordered list item to an unordered list item
+            line = "- " + re.sub(r"\d+\.\s*", "", line)
+
+        # Append the normalized line to the list of normalized lines
+        normalized_lines.append(line)
+
+    # Join the normalized lines back into a string
+    normalized_markdown = "\n".join(normalized_lines)
+
+    return normalized_markdown
+
 def timing(fun):
     """
     Decorator that prints the execution time for the decorated function. A modifed
@@ -55,6 +94,8 @@ def extract_bullets_from_markdown(markdown: str) -> str:
 
     # Join the list items with double newlines
     bullet_points_as_string = "\n\n".join(list_items)
+    # Normalize the list items
+    bullet_points_as_string = _normalize_markdown_list(bullet_points_as_string)
     return bullet_points_as_string
 
 
@@ -65,22 +106,3 @@ def save_markdown(file_name: str, markdown_content: str) -> None:
         f.write(markdown_content)
 
     print(f"Markdown file {file_name} created successfully.")
-
-
-if __name__ == "__main__":
-    import re
-
-    markdown_text = """Here is the filtered list of relevant GitHub projects related to the keyword "Auto-GPT" and its description:
-
-    1. [Auto-GPT](https://github.com/Significant-Gravitas/Auto-GPT): An experimental open-source attempt to make GPT-4 fully autonomous.
-    Additional details for Auto-GPT. (143754 stars)
-    dasdasdasd
-    - [Auto-GPT-Plugins](https://github.com/Significant-Gravitas/Auto-GPT-Plugins): Plugins for Auto-GPT. (3368 stars)
-    * [Auto-GPT中文版本及爱好者组织](https://github.com/kaqijiang/Auto-GPT-ZH): Auto-GPT Chinese version and enthusiast organization. (2194 stars)
-    + [Free-Auto-GPT](https://github.com/IntelligenzaArtificiale/Free-Auto-GPT): Free Auto GPT with NO paid API is a repository that offers a simple version of Auto GPT, an autonomous AI agent capable of performing tasks independently. (1955 stars)
-
-    Please note that the list is sorted by the number of stars each project has received."""
-
-    bullet_points_as_string = extract_bullets_from_markdown(markdown_text)
-
-    print(bullet_points_as_string)
