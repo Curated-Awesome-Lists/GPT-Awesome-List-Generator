@@ -116,7 +116,7 @@ def generate_markdown_per_data_type(
     chatgpt_client: ChatApp,
     model: str = "gpt-3.5-turbo",
     batch_size: int = 10,
-) -> Tuple[dict[str, str], dict[str, int]]:
+) -> Tuple[dict[str, str], float]:
     """Generate a markdown for each data type separately.
 
     Args:
@@ -143,6 +143,9 @@ def generate_markdown_per_data_type(
     for key, value in data_types_info.items():
         prompt_messages = value["prompt"]
         extracted_data = value["data"]
+        if not extracted_data:
+            print(f"No data found for '{key}'.")
+            continue
         bullet_points = ""
 
         for i in range(0, len(extracted_data), batch_size):
@@ -166,9 +169,7 @@ def generate_markdown_per_data_type(
 
         markdown_contents[key] = bullet_points
 
-    usage_info = {"total_tokens": total_tokens}
-
-    return markdown_contents, usage_info
+    return markdown_contents, total_tokens
 
 
 def merge_markdown_contents(markdown_contents: dict[str, str]) -> str:
@@ -178,6 +179,46 @@ def merge_markdown_contents(markdown_contents: dict[str, str]) -> str:
         markdown += f"## {key}\n\n"
         markdown += value + "\n"
     return markdown
+
+
+def generate_awesome_list_markdown(
+    data_markdown: str, keyword: str, description: str
+) -> Tuple[str, float]:
+    """Generate the final awesome list markdown"""
+    chatgpt_client = ChatApp(
+        os.path.join(
+            os.path.dirname(os.path.realpath(__file__)) + "/connections",
+            "chatgpt_setup_data",
+            "awesome_list_context.json",
+        ),
+        api_key=os.environ["OPENAI_API_KEY"],
+    )
+    first_prompt = """
+    I will give you a keyword, its description, and markdown code for various data sections 
+    like GitHub projects or YouTube videos. Your task is to create an awesome list using 
+    the given data, following these guidelines:
+    1. Design an attractive awesome list with a table of contents and an official resources section at the top.
+    2. Filter the official resources from the data using the keyword and description I provided.
+    3. Make the design better. For example, add the star symbol to GitHub stars and the eye symbol to YouTube views.
+    4. DO NOT add any new data to any data section; only use the given data to create the awesome list. 
+    5. If a data section is empty delete it and don't add it to the awesome list
+    Do you understand?
+    """
+    second_prompt = f"""Keyword is: {keyword}\nDescription is: {description}\nData in Markdown code is: {data_markdown}"""
+    messages = [
+        {"role": "user", "content": first_prompt},
+        {
+            "role": "assistant",
+            "content": f"Ok I understand. Provide me with the keyword, description and "
+            f"data in markdown format.",
+        },
+        {"role": "user", "content": second_prompt},
+    ]
+    chatgpt_client.messages.extend(messages)
+    completion = chatgpt_client.send_messages()
+    response_message = completion["choices"][0]["message"].content
+    total_tokens = completion.usage.total_tokens
+    return response_message, total_tokens
 
 
 def generate_awesome_list(
@@ -229,7 +270,10 @@ def generate_awesome_list(
         data_types_info, chatgpt_client, model
     )
     merged_markdown = merge_markdown_contents(markdown_contents)
-    save_markdown(f"{k}.md", merged_markdown)
+    awesome_list_markdown, _ = generate_awesome_list_markdown(
+        merged_markdown, keywords, description
+    )
+    save_markdown(f"{k}.md", awesome_list_markdown)
 
 
 if __name__ == "__main__":
