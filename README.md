@@ -35,7 +35,7 @@ generator = AwesomeListGenerator(keyword="Your Keyword",
                            data_extraction_batch_size=10,
                            number_of_results=40)
 # generate and save the markdown
-markdown_content = alg.save_and_return_awesome_list()
+markdown_content = generator.save_and_return_awesome_list()
 ```
 
 ## Setup
