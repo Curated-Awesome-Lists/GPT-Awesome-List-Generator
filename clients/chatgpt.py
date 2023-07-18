@@ -44,7 +44,7 @@ if __name__ == "__main__":
     chatgpt_client = ChatApp(
         get_root_directory()
         / "connections"
-        / "chatgpt_setup_data"
+        / "setup_data"
         / "awesome_list_context.json",
         api_key=os.environ["OPENAI_API_KEY"],
     )

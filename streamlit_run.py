@@ -1,16 +1,10 @@
-import os
 from typing import Dict, Tuple
 
 import openai
 import streamlit as st
 from streamlit_chat import message
 
-from auto_awesome_generator import (
-    generate_and_return_awesome_list,
-    get_awesome_list_input_data,
-    get_data_as_chatgpt_client_messages,
-)
-from connections.chatgpt import ChatApp
+from awesome_list_generator import AwesomeListGenerator
 from utils import timing
 
 
@@ -56,21 +50,9 @@ def reset_session_state() -> None:
 
 
 @timing
-def generate_response(k: str, d: str, model: str) -> Tuple[str, Dict[str, int]]:
-    """Generate a response using the OpenAI API."""
-    chatgpt_setup_file_path = os.path.join(
-        os.path.dirname(os.path.realpath(__file__)) + "/connections",
-        "chatgpt_setup_data",
-        "awesome_list_context.json",
-    )
-    chatgpt_client = ChatApp(
-        chatgpt_setup_file_path,
-        api_key=st.session_state["openai_api_key"],
-    )
-    data = get_awesome_list_input_data(k, d)
-    data_messages = get_data_as_chatgpt_client_messages(data)
-    chatgpt_client.messages.extend(data_messages)
-    response, usage_info = generate_and_return_awesome_list(chatgpt_client, model)
+def generate_response(keyword: str, description: str, model: str) -> Tuple[str, Dict[str, int]]:
+    awesome_list_generator = AwesomeListGenerator(keyword, description, model, 10, 40)
+    response, usage_info = awesome_list_generator.save_and_return_awesome_list()
     return response, usage_info
 
 
@@ -135,10 +117,10 @@ else:
                             usage_info["tokens"] * 0.002 / 1000
                             if model_name == "GPT-3.5"
                             else (
-                                usage_info["prompt_tokens"] * 0.03
-                                + usage_info["completion_tokens"] * 0.06
-                            )
-                            / 1000
+                                         usage_info["prompt_tokens"] * 0.03
+                                         + usage_info["completion_tokens"] * 0.06
+                                 )
+                                 / 1000
                         ),
                     }
                 )

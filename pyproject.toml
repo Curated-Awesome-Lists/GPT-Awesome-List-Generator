@@ -4,7 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["alialsaeedi19 <alialsaeedi19@gmail.com>"]
 readme = "README.md"
-packages = [{include = "connections"}, {include = "data_pipelines"}]
+packages = [{include = "clients"}, {include = "section_data_pipelines"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
