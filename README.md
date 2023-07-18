@@ -29,7 +29,7 @@ Here is an example of how to use the class:
 
 ```python
 # create an instance of the AwesomeListGenerator
-alg = AwesomeListGenerator(keyword="Your Keyword",
+generator = AwesomeListGenerator(keyword="Your Keyword",
                            description="Your Description",
                            model="gpt-3.5-turbo-16k",
                            data_extraction_batch_size=10,
