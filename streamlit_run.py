@@ -15,7 +15,6 @@ def initialize_session_state() -> None:
         "user_input",
         "model_name",
         "tokens",
-        "cost",
         "input_submitted",
     ]
 
@@ -43,7 +42,6 @@ def reset_session_state() -> None:
             "output": "",
             "user_input": "",
             "model_name": "",
-            "cost": 0.0,
             "tokens": "",
         }
     )
@@ -78,7 +76,7 @@ st.markdown(
 
 initialize_session_state()
 
-model_map = {"GPT-3.5": "gpt-3.5-turbo", "GPT-4": "gpt-4"}
+model_map = {"GPT-3.5": "gpt-3.5-turbo-16k", "GPT-4": "gpt-4-0314"}
 
 # Check for OpenAI API key in session state
 if not st.session_state["openai_api_key"]:
@@ -102,30 +100,30 @@ else:
         reset_session_state()
 
     with st.container():
-        if not st.session_state["input_submitted"]:
+        if (
+            not st.session_state["input_submitted"]
+            and "loading" not in st.session_state
+        ):
             keyword = st.text_input("keyword:")
             description = st.text_input("description:")
             submit_button = st.button(label="Create Awesome List")
             if submit_button and keyword and description:
-                awesome_list, usage_info = generate_response(
-                    keyword, description, model
-                )
+                submit_button = None
+                with st.spinner(
+                    "The awesome list is being generated, this could take some minutes "
+                    "to finish. Please be patient"
+                ):
+                    st.session_state["loading"] = True  # set loading state
+                    awesome_list, usage_info = generate_response(
+                        keyword, description, model
+                    )
                 st.session_state.update(
                     {
                         "input_submitted": True,
                         "user_input": f"generate an awesome list for {keyword}",
                         "output": awesome_list,
                         "model_name": model_name,
-                        "tokens": usage_info["tokens"],
-                        "cost": (
-                            usage_info["tokens"] * 0.002 / 1000
-                            if model_name == "GPT-3.5"
-                            else (
-                                usage_info["prompt_tokens"] * 0.03
-                                + usage_info["completion_tokens"] * 0.06
-                            )
-                            / 1000
-                        ),
+                        "tokens": usage_info["total_tokens"],
                     }
                 )
                 st.experimental_rerun()
@@ -138,5 +136,4 @@ else:
                 st.write(
                     f"Model used: {st.session_state['model_name']}; "
                     f"Number of tokens used: {st.session_state['tokens']}; "
-                    f"Cost: ${st.session_state['cost']:.5f}"
                 )
