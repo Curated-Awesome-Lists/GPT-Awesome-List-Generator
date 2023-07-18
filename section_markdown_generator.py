@@ -6,7 +6,6 @@ from utils import timing, extract_bullets_from_markdown
 
 
 class SectionMarkdownGenerator:
-
     def __init__(self, model):
         self.model = model
         self.client = ChatApp(
@@ -20,7 +19,9 @@ class SectionMarkdownGenerator:
         )
 
     @timing
-    def generate_markdown(self, data_types_info: dict, batch_size: int) -> Tuple[dict[str, str], float]:
+    def generate_markdown(
+        self, data_types_info: dict, batch_size: int
+    ) -> Tuple[dict[str, str], float]:
         markdown_contents = {}
         total_tokens = 0
 
@@ -32,7 +33,7 @@ class SectionMarkdownGenerator:
                 continue
             bullet_points = ""
             for i in range(0, len(extracted_data), batch_size):
-                batch_data = extracted_data[i: i + batch_size]
+                batch_data = extracted_data[i : i + batch_size]
                 data_message = {
                     "role": "user",
                     "content": f"Ok, I will provide the data, please send the response ONLY as a markdown Unordered list. data for '{key}' is: {batch_data}",

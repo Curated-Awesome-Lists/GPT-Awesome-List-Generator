@@ -39,12 +39,13 @@ class AwesomeListGenerator:
     """
 
     def __init__(
-            self,
-            keyword: str,
-            description: str,
-            model: str = "gpt-3.5-turbo-16k",
-            data_extraction_batch_size: int = 10,
-            number_of_results: int = 40):
+        self,
+        keyword: str,
+        description: str,
+        model: str = "gpt-3.5-turbo-16k",
+        data_extraction_batch_size: int = 10,
+        number_of_results: int = 40,
+    ):
         """
         Constructs all the necessary attributes for the AwesomeListGenerator object.
 
@@ -66,11 +67,12 @@ class AwesomeListGenerator:
         self.description = description
         self.model = model
         self.data_extraction_batch_size = data_extraction_batch_size
-        self.section_data_extractor = SectionDataExtractor(keyword=keyword, description=description,
-                                                           num_results=number_of_results)
+        self.section_data_extractor = SectionDataExtractor(
+            keyword=keyword, description=description, num_results=number_of_results
+        )
         self.section_generator = SectionMarkdownGenerator(model)
 
-    def save_and_return_awesome_list(self) -> str:
+    def save_and_return_awesome_list(self) -> tuple[str, dict[str, int]]:
         """
         Generates and saves the awesome list into a markdown file, and returns the markdown content.
 
@@ -81,12 +83,13 @@ class AwesomeListGenerator:
         """
 
         data_types_info = self.section_data_extractor.get_data()
-        markdown_contents, markdown_per_data_tokens = self.section_generator.generate_markdown(
+        markdown_contents, total_tokens = self.section_generator.generate_markdown(
             data_types_info, batch_size=self.data_extraction_batch_size
         )
         merged_markdown = self._merge_markdown_contents(markdown_contents)
         save_markdown(f"{self.keyword}.md", merged_markdown)
-        return merged_markdown
+        usage_info = {"total_tokens": total_tokens}
+        return merged_markdown, usage_info
 
     def _merge_markdown_contents(self, markdown_contents: dict[str, str]) -> str:
         """

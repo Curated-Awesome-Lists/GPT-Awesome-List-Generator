@@ -2,7 +2,6 @@ from section_data_pipelines import google_scholar, github, youtube, podcast
 
 
 class SectionDataExtractor:
-
     def __init__(self, keyword: str, description: str, num_results: int = 20):
         self.keyword = keyword
         self.description = description
@@ -12,23 +11,15 @@ class SectionDataExtractor:
             (
                 "GitHub projects",
                 "the number of stars",
-                github.get_github_search_results
+                github.get_github_search_results,
             ),
-            (
-                "YouTube videos",
-                "the number of views",
-                youtube.search_youtube
-            ),
+            ("YouTube videos", "the number of views", youtube.search_youtube),
             (
                 "Google Scholar papers",
                 "number of citations else relevance",
                 google_scholar.scrape_google_scholar,
             ),
-            (
-                "podcasts",
-                "their relevance",
-                podcast.get_podcasts
-            ),
+            ("podcasts", "their relevance", podcast.get_podcasts),
         ]
 
     def get_data(self) -> dict:
@@ -40,9 +31,7 @@ class SectionDataExtractor:
             for dt in self.data_pipelines
         }
 
-    def _get_prompt_per_pipeline(self,
-                                 data_type: str, sort_metric: str
-                                 ) -> list[dict]:
+    def _get_prompt_per_pipeline(self, data_type: str, sort_metric: str) -> list[dict]:
         prompt = f"""
         I will provide a list of elements categorized as '{data_type}', each associated with a specific keyword '{self.keyword}' and an accompanying description "{self.description}". These elements are sorted based on '{sort_metric}'.
 

@@ -50,7 +50,9 @@ def reset_session_state() -> None:
 
 
 @timing
-def generate_response(keyword: str, description: str, model: str) -> Tuple[str, Dict[str, int]]:
+def generate_response(
+    keyword: str, description: str, model: str
+) -> Tuple[str, Dict[str, int]]:
     awesome_list_generator = AwesomeListGenerator(keyword, description, model, 10, 40)
     response, usage_info = awesome_list_generator.save_and_return_awesome_list()
     return response, usage_info
@@ -105,22 +107,24 @@ else:
             description = st.text_input("description:")
             submit_button = st.button(label="Create Awesome List")
             if submit_button and keyword and description:
-                output, usage_info = generate_response(keyword, description, model)
+                awesome_list, usage_info = generate_response(
+                    keyword, description, model
+                )
                 st.session_state.update(
                     {
                         "input_submitted": True,
                         "user_input": f"generate an awesome list for {keyword}",
-                        "output": output,
+                        "output": awesome_list,
                         "model_name": model_name,
                         "tokens": usage_info["tokens"],
                         "cost": (
                             usage_info["tokens"] * 0.002 / 1000
                             if model_name == "GPT-3.5"
                             else (
-                                         usage_info["prompt_tokens"] * 0.03
-                                         + usage_info["completion_tokens"] * 0.06
-                                 )
-                                 / 1000
+                                usage_info["prompt_tokens"] * 0.03
+                                + usage_info["completion_tokens"] * 0.06
+                            )
+                            / 1000
                         ),
                     }
                 )

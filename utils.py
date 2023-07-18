@@ -44,6 +44,7 @@ def _normalize_markdown_list(markdown_string):
 
     return normalized_markdown
 
+
 def timing(fun):
     """
     Decorator that prints the execution time for the decorated function. A modifed
