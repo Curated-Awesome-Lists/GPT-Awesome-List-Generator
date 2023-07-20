@@ -24,7 +24,13 @@ class AppState:
     ]
 
     @classmethod
-    def initialize_or_reset(cls) -> None:
+    def initialize(cls) -> None:
+        for key, default_value in zip(cls.keys, cls.default_values):
+            if key not in st.session_state:
+                st.session_state[key] = default_value
+
+    @classmethod
+    def reset(cls) -> None:
         for key, default_value in zip(cls.keys, cls.default_values):
             st.session_state[key] = default_value
 
@@ -40,7 +46,7 @@ def generate_response(
 
 def setup_streamlit():
     # Streamlit configuration
-    st.set_page_config(page_title="AVA", page_icon=":robot_face:")
+    st.set_page_config(page_title="Awesome List Generator", page_icon=":robot_face:")
 
     # Markdown for the application
     st.markdown(
@@ -96,11 +102,11 @@ def setup_main_container():
 
 
 if __name__ == "__main__":
+    AppState.initialize()
     setup_streamlit()
-    AppState.initialize_or_reset()
     model_map = {"GPT-3.5": "gpt-3.5-turbo-16k", "GPT-4": "gpt-4-0314"}
     model_name, model = setup_sidebar(model_map)
     if st.sidebar.button("Clear Conversation", key="clear"):
-        AppState.initialize_or_reset()
+        AppState.reset()
         st.experimental_rerun()
     setup_main_container()
