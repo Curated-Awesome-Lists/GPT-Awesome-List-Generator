@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+
 from section_data_extractor import SectionDataExtractor
 from section_markdown_generator import SectionMarkdownGenerator
 from utils import save_markdown
