@@ -1,6 +1,5 @@
 from typing import Dict, Tuple
 
-import openai
 import streamlit as st
 from streamlit_chat import message
 
@@ -8,43 +7,26 @@ from awesome_list_generator import AwesomeListGenerator
 from utils import timing
 
 
-def initialize_session_state() -> None:
+class AppState:
     keys = [
-        "openai_api_key",
         "output",
         "user_input",
         "model_name",
         "tokens",
         "input_submitted",
     ]
-
     default_values = [
-        "",
-        "",
-        "",
         "",
         "",
         "",
         0.0,
         False,
-        "",
     ]
 
-    for key, default_value in zip(keys, default_values):
-        if key not in st.session_state:
+    @classmethod
+    def initialize_or_reset(cls) -> None:
+        for key, default_value in zip(cls.keys, cls.default_values):
             st.session_state[key] = default_value
-
-
-def reset_session_state() -> None:
-    st.session_state.update(
-        {
-            "input_submitted": False,
-            "output": "",
-            "user_input": "",
-            "model_name": "",
-            "tokens": "",
-        }
-    )
 
 
 @timing
@@ -56,40 +38,26 @@ def generate_response(
     return response, usage_info
 
 
-def check_if_openai_api_key_is_submitted() -> bool:
-    """Check if the OpenAI API key is submitted."""
-    if not st.session_state["openai_api_key"]:
-        st.error("Please enter an OpenAI API key.")
-        return False
-    else:
-        return True
+def setup_streamlit():
+    # Streamlit configuration
+    st.set_page_config(page_title="AVA", page_icon=":robot_face:")
+
+    # Markdown for the application
+    st.markdown(
+        "<h1 style='text-align: center;'>Awesome List Generator</h1>",
+        unsafe_allow_html=True,
+    )
 
 
-# Streamlit configuration
-st.set_page_config(page_title="AVA", page_icon=":robot_face:")
+def setup_sidebar(model_map):
+    st.sidebar.title("Sidebar")
+    model_name = st.sidebar.radio("Choose a model:", tuple(model_map.keys()))
+    counter_placeholder = st.sidebar.empty()
 
-# Markdown for the application
-st.markdown(
-    "<h1 style='text-align: center;'>Awesome List Generator</h1>",
-    unsafe_allow_html=True,
-)
+    return model_name, model_map[model_name]
 
-initialize_session_state()
 
-model_map = {"GPT-3.5": "gpt-3.5-turbo-16k", "GPT-4": "gpt-4-0314"}
-
-openai.api_key = st.session_state["openai_api_key"]
-st.sidebar.title("Sidebar")
-model_name = st.sidebar.radio("Choose a model:", ("GPT-3.5", "GPT-4"))
-counter_placeholder = st.sidebar.empty()
-
-model = model_map[model_name]
-
-if st.sidebar.button("Clear Conversation", key="clear"):
-    reset_session_state()
-    st.experimental_rerun()
-
-with st.container():
+def setup_main_container():
     if not st.session_state["input_submitted"]:
         keyword = st.text_input("keyword:")
         description = st.text_input("description:")
@@ -125,3 +93,14 @@ with st.container():
                 f"Model used: {st.session_state['model_name']}; "
                 f"Number of tokens used: {st.session_state['tokens']}; "
             )
+
+
+if __name__ == "__main__":
+    setup_streamlit()
+    AppState.initialize_or_reset()
+    model_map = {"GPT-3.5": "gpt-3.5-turbo-16k", "GPT-4": "gpt-4-0314"}
+    model_name, model = setup_sidebar(model_map)
+    if st.sidebar.button("Clear Conversation", key="clear"):
+        AppState.initialize_or_reset()
+        st.experimental_rerun()
+    setup_main_container()
