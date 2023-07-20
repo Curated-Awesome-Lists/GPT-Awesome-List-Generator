@@ -78,62 +78,50 @@ initialize_session_state()
 
 model_map = {"GPT-3.5": "gpt-3.5-turbo-16k", "GPT-4": "gpt-4-0314"}
 
-# Check for OpenAI API key in session state
-if not st.session_state["openai_api_key"]:
-    with st.form(key="api_key_form"):
-        st.session_state["openai_api_key"] = st.text_input(
-            "Enter OpenAI API key:", type="password"
-        )
-        api_key_submit = st.form_submit_button("Submit API Key")
-        if api_key_submit:
+openai.api_key = st.session_state["openai_api_key"]
+st.sidebar.title("Sidebar")
+model_name = st.sidebar.radio("Choose a model:", ("GPT-3.5", "GPT-4"))
+counter_placeholder = st.sidebar.empty()
+
+model = model_map[model_name]
+
+if st.sidebar.button("Clear Conversation", key="clear"):
+    reset_session_state()
+    st.experimental_rerun()
+
+with st.container():
+    if not st.session_state["input_submitted"]:
+        keyword = st.text_input("keyword:")
+        description = st.text_input("description:")
+        submit_button_slot = st.empty()
+        submit_button = submit_button_slot.button(label="Create Awesome List")
+
+        if submit_button and keyword and description:
+            submit_button_slot.empty()
+            with st.spinner(
+                "The awesome list is being generated, this could take some minutes "
+                "to finish. Please be patient"
+            ):
+                awesome_list, usage_info = generate_response(
+                    keyword, description, model
+                )
+            st.session_state.update(
+                {
+                    "input_submitted": True,
+                    "user_input": f"generate an awesome list for {keyword}",
+                    "output": awesome_list,
+                    "model_name": model_name,
+                    "tokens": usage_info["total_tokens"],
+                }
+            )
             st.experimental_rerun()
-else:
-    # Continue with application if API key exists
-    openai.api_key = st.session_state["openai_api_key"]
-    st.sidebar.title("Sidebar")
-    model_name = st.sidebar.radio("Choose a model:", ("GPT-3.5", "GPT-4"))
-    counter_placeholder = st.sidebar.empty()
 
-    model = model_map[model_name]
-
-    if st.sidebar.button("Clear Conversation", key="clear"):
-        reset_session_state()
-
-    with st.container():
-        if (
-            not st.session_state["input_submitted"]
-            and "loading" not in st.session_state
-        ):
-            keyword = st.text_input("keyword:")
-            description = st.text_input("description:")
-            submit_button = st.button(label="Create Awesome List")
-            if submit_button and keyword and description:
-                submit_button = None
-                with st.spinner(
-                    "The awesome list is being generated, this could take some minutes "
-                    "to finish. Please be patient"
-                ):
-                    st.session_state["loading"] = True  # set loading state
-                    awesome_list, usage_info = generate_response(
-                        keyword, description, model
-                    )
-                st.session_state.update(
-                    {
-                        "input_submitted": True,
-                        "user_input": f"generate an awesome list for {keyword}",
-                        "output": awesome_list,
-                        "model_name": model_name,
-                        "tokens": usage_info["total_tokens"],
-                    }
-                )
-                st.experimental_rerun()
-
-        else:
-            with st.container():
-                key = "0"
-                message(st.session_state["user_input"], is_user=True, key=key + "_user")
-                message(st.session_state["output"], key=key)
-                st.write(
-                    f"Model used: {st.session_state['model_name']}; "
-                    f"Number of tokens used: {st.session_state['tokens']}; "
-                )
+    else:
+        with st.container():
+            key = "0"
+            message(st.session_state["user_input"], is_user=True, key=key + "_user")
+            message(st.session_state["output"], key=key)
+            st.write(
+                f"Model used: {st.session_state['model_name']}; "
+                f"Number of tokens used: {st.session_state['tokens']}; "
+            )
