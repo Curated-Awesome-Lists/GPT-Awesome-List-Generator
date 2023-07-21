@@ -24,10 +24,10 @@ class AwesomeListGenerator:
     model : str
         the OpenAI model to be used for generating the markdown (default is "gpt-3.5-turbo-16k")
     data_extraction_batch_size : int
-        the number of data items to process in each batch (default is 10)
+        the number of data items to process in each batch (default is 20)
         For example, if the batch size is 10, then the data will be fetched from the data sources in batches of 10 (like 10 github projects at a time)
     number_of_results : int
-        the number of results to fetch from each data source (default is 40). For example, fetch 40 github projects then process them with LLM model in batches based on data_extraction_batch_size.
+        the number of results to fetch from each data source (default is 20). For example, fetch 20 github projects then process them with LLM model in batches based on data_extraction_batch_size.
     section_data_extractor : SectionDataExtractor
         an object of SectionDataExtractor to extract the data for each section
     section_generator : SectionMarkdownGenerator
@@ -45,7 +45,7 @@ class AwesomeListGenerator:
         description: str,
         model: str = "gpt-3.5-turbo-16k",
         data_extraction_batch_size: int = 10,
-        number_of_results: int = 40,
+        number_of_results: int = 20,
     ):
         """
         Constructs all the necessary attributes for the AwesomeListGenerator object.
