@@ -2,7 +2,7 @@ import os
 from typing import Tuple
 
 from clients.chatgpt import ChatApp
-from utils import timing, extract_bullets_from_markdown
+from utils import extract_bullets_from_markdown, get_root_directory, timing
 
 
 class SectionMarkdownGenerator:
@@ -10,7 +10,7 @@ class SectionMarkdownGenerator:
         self.model = model
         self.client = ChatApp(
             os.path.join(
-                os.path.dirname(os.path.realpath(__file__)),
+                get_root_directory(),
                 "clients",
                 "setup_data",
                 "awesome_list_context.json",

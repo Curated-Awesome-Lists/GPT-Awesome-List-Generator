@@ -42,10 +42,12 @@ class ChatApp:
 if __name__ == "__main__":
     load_dotenv()
     chatgpt_client = ChatApp(
-        get_root_directory()
-        / "connections"
-        / "setup_data"
-        / "awesome_list_context.json",
+        os.path.join(
+            get_root_directory(),
+            "clients",
+            "setup_data",
+            "awesome_list_context.json",
+        ),
         api_key=os.environ["OPENAI_API_KEY"],
     )
     print(chatgpt_client.send_messages())
