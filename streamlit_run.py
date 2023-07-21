@@ -66,7 +66,7 @@ def setup_sidebar(model_map):
 def setup_main_container():
     if not st.session_state["input_submitted"]:
         keyword = st.text_input("keyword:")
-        description = st.text_input("description:")
+        description = st.text_input("Describe the keyword in 1-2 sentences:")
         submit_button_slot = st.empty()
         submit_button = submit_button_slot.button(label="Create Awesome List")
 
