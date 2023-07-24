@@ -1,5 +1,5 @@
 import os
-from typing import Tuple
+from typing import Tuple, Union
 
 from joblib import delayed, Parallel
 
@@ -20,7 +20,25 @@ class SectionMarkdownGenerator:
             api_key=os.environ["OPENAI_API_KEY"],
         )
 
-    def process_one_data_type(self, data_type_key, data_type_info, batch_size):
+    def process_one_data_type(
+        self, data_type_key: str, data_type_info: dict, batch_size: int
+    ) -> Tuple[str, Union[str, None], int]:
+        """
+        Process a specific type of data and returns the data type key, bullet points,
+        and total tokens used.
+
+        Args:
+            data_type_key (str): The key that identifies the type of data to process.
+            data_type_info (dict): Dictionary contains the prompts and extracted data
+            batch_size (int): The size of each batch of data to process at a time.
+
+        Returns:
+            tuple: Returns a tuple of three items:
+                - The data type key (str)
+                - The bullet points extracted from the responses (str), or None if no
+                data was found for the given key
+                - The total number of tokens used in the processing (int)
+        """
         initial_client_messages = self.client.messages.copy()
         total_tokens = 0
         bullet_points = ""
