@@ -1,6 +1,8 @@
 import os
 from typing import Tuple
 
+from joblib import delayed, Parallel
+
 from clients.chatgpt import ChatApp
 from utils import extract_bullets_from_markdown, get_root_directory, timing
 
@@ -18,6 +20,35 @@ class SectionMarkdownGenerator:
             api_key=os.environ["OPENAI_API_KEY"],
         )
 
+    def process_one_data_type(self, data_type_key, data_type_info, batch_size):
+        initial_client_messages = self.client.messages.copy()
+        total_tokens = 0
+        bullet_points = ""
+
+        prompt_messages = data_type_info["prompt"]
+        extracted_data = data_type_info["data"]
+        if not extracted_data:
+            print(f"No data found for '{data_type_key}'.")
+            return data_type_key, None, 0
+
+        data_type_client_messages = initial_client_messages + prompt_messages
+        for i in range(0, len(extracted_data), batch_size):
+            batch_data = extracted_data[i : i + batch_size]
+            data_message = {
+                "role": "user",
+                "content": f"Ok, I will provide the data, please send the response ONLY as a markdown Unordered list. data for '{data_type_key}' is: {batch_data}",
+            }
+            self.client.messages = data_type_client_messages.copy()
+            self.client.messages.append(data_message)
+            completion = self.client.send_messages(model=self.model)
+            total_tokens += completion.usage.total_tokens
+
+            response_message = completion["choices"][0]["message"].content
+            batch_bullet_points = extract_bullets_from_markdown(response_message)
+            bullet_points = bullet_points + batch_bullet_points + "\n"
+
+        return data_type_key, bullet_points, total_tokens
+
     @timing
     def generate_markdown(
         self, data_types_info: dict, batch_size: int
@@ -25,32 +56,14 @@ class SectionMarkdownGenerator:
         markdown_contents = {}
         total_tokens = 0
 
-        initial_client_messages = self.client.messages.copy()
-        for key, value in data_types_info.items():
-            prompt_messages = value["prompt"]
-            extracted_data = value["data"]
-            if not extracted_data:
-                print(f"No data found for '{key}'.")
-                continue
+        results = Parallel(n_jobs=-1)(
+            delayed(self.process_one_data_type)(key, value, batch_size)
+            for key, value in data_types_info.items()
+        )
 
-            bullet_points = ""
-            client_data_type_messages = initial_client_messages + prompt_messages
-            for i in range(0, len(extracted_data), batch_size):
-                batch_data = extracted_data[i : i + batch_size]
-                data_message = {
-                    "role": "user",
-                    "content": f"Ok, I will provide the data, please send the response ONLY as a markdown Unordered list. data for '{key}' is: {batch_data}",
-                }
-                self.client.messages = client_data_type_messages.copy()
-                self.client.messages.append(data_message)
-                completion = self.client.send_messages(model=self.model)
-                total_tokens += completion.usage.total_tokens
-
-                response_message = completion["choices"][0]["message"].content
-                batch_bullet_points = extract_bullets_from_markdown(response_message)
-                bullet_points = bullet_points + batch_bullet_points + "\n"
-
-            markdown_contents[key] = bullet_points
-            self.client.messages = initial_client_messages
+        for key, bullet_points, tokens in results:
+            if bullet_points is not None:
+                markdown_contents[key] = bullet_points
+                total_tokens += tokens
 
         return markdown_contents, total_tokens

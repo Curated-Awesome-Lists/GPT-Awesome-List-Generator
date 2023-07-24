@@ -16,6 +16,7 @@ youtube-search-python = "*"
 podsearch = "*"
 streamlit = "*"
 streamlit-chat = "*"
+joblib = "*"
 
 
 [tool.poetry.group.dev.dependencies]
