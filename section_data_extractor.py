@@ -36,10 +36,11 @@ class SectionDataExtractor:
         I will provide a list of elements categorized as '{data_type}', each associated with a specific keyword '{self.keyword}' and an accompanying description "{self.description}". These elements are sorted based on '{sort_metric}'.
 
         Please perform the following tasks:
-        1. Review the '{data_type}' and retain only those that are directly relevant to the given keyword and its respective description. 
-        2. Format the filtered '{data_type}' into a visually appealing markdown unordered list. 
-        3. Enhance the list's aesthetics and clarity for import into a markdown editor by adding an appropriate emoji next to each element, next to its '{sort_metric}' value.
-        4. Ensure that the description of each item on the list is concise and coherent ideally 2-3 sentences long.
+        1. Review the '{data_type}' and keep only those that are directly relevant to the given keyword and its respective description. 
+        2. Compare the description of each item in the '{data_type}' with the given description, and keep only those that are directly relevant to the give description.
+        3. Format the filtered '{data_type}' into a visually appealing markdown unordered list. 
+        4. Enhance the list's aesthetics and clarity for import into a markdown editor by adding an appropriate emoji next to each element, next to its '{sort_metric}' value.
+        5. Ensure that the description of each item on the list is concise and coherent ideally 2-3 sentences long.
         "
         """
         return [
