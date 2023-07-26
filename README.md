@@ -24,24 +24,18 @@ GPT 3.5 or GPT 4.
 
 ### Using Streamlit UI
 
-We've provided a Streamlit interface for running this application. To use it, run the following command:
+We've provided a Streamlit interface for running this application. To use it, follow these steps:
 
-1. Activate the project's virtual environment:
-
-    ```bash
-    poetry shell
-    ```
-
-2. Run the Streamlit application using Poetry:
+1. Run the Streamlit application using Poetry:
 
 ```bash
 poetry run streamlit run streamlit_run.py
 ```
 
-3. Open `http://localhost:8501`
+2. Open `http://localhost:8501`
 
-You'll be able to provide the necessary parameters through the UI and then generate your awesome list such as the openai
-key, model type, keyword and description.
+You'll be able to provide the necessary parameters through the UI and then generate your awesome list such as 
+model type, keyword and description.
 
 ### Using code directly
 
@@ -55,7 +49,7 @@ The main class used in this project is the `AwesomeListGenerator`. It can be ini
   10). For example, if the batch size is 10, then the data will be fetched from the data sources in batches of 10 (like
   10 github projects at a time).
 - `number_of_results`: An integer representing the number of results to fetch from each data source (default is 40). the
-  number of results to fetch from each data source (default is 40). For example, fetch 40 github projects then process
+  number of results to fetch from each data source (default is 20). For example, fetch 20 Github projects then process
   them with LLM model in batches based on data_extraction_batch_size.
 
 After initializing the class with these parameters, you can call the `save_and_return_awesome_list` method to generate
@@ -69,7 +63,7 @@ generator = AwesomeListGenerator(keyword="Your Keyword",
                                  description="Your Description",
                                  model="gpt-3.5-turbo-16k",
                                  data_extraction_batch_size=10,
-                                 number_of_results=40)
+                                 number_of_results=20)
 # generate and save the markdown
 markdown_content = generator.save_and_return_awesome_list()
 ```
