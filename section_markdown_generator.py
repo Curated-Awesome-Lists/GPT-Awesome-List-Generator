@@ -54,7 +54,8 @@ class SectionMarkdownGenerator:
             batch_data = extracted_data[i : i + batch_size]
             data_message = {
                 "role": "user",
-                "content": f"Ok, I will provide the data, please send the response ONLY as a markdown Unordered list. data for '{data_type_key}' is: {batch_data}",
+                "content": f"Ok, I will provide the data, please send the response ONLY as a markdown Unordered list. "
+                           f"data for '{data_type_key}' is: {batch_data}",
             }
             self.client.messages = data_type_client_messages.copy()
             self.client.messages.append(data_message)

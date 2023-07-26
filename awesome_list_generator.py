@@ -73,7 +73,7 @@ class AwesomeListGenerator:
         )
         self.section_generator = SectionMarkdownGenerator(model)
 
-    def save_and_return_awesome_list(self) -> tuple[str, dict[str, int]]:
+    def save_and_return_awesome_list(self) -> tuple[str, dict[str, float]]:
         """
         Generates and saves the awesome list into a markdown file, and returns the markdown content.
 
