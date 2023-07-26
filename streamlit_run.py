@@ -20,7 +20,9 @@ class AppState:
 
 
 @timing
-def generate_response(keyword: str, description: str, model: str) -> tuple[str, dict[str, float]]:
+def generate_response(
+    keyword: str, description: str, model: str
+) -> tuple[str, dict[str, float]]:
     awesome_list_generator = AwesomeListGenerator(keyword, description, model, 10, 40)
     response, usage_info = awesome_list_generator.save_and_return_awesome_list()
     return response, usage_info
@@ -28,7 +30,10 @@ def generate_response(keyword: str, description: str, model: str) -> tuple[str, 
 
 def setup_streamlit():
     st.set_page_config(page_title="Awesome List Generator", page_icon=":robot_face:")
-    st.markdown("<h1 style='text-align: center; font-size:3em;'>Awesome List Generator</h1>", unsafe_allow_html=True)
+    st.markdown(
+        "<h1 style='text-align: center; font-size:3em;'>Awesome List Generator</h1>",
+        unsafe_allow_html=True,
+    )
 
 
 def setup_sidebar(model_map):
@@ -39,29 +44,44 @@ def setup_sidebar(model_map):
 
 
 def setup_main_container():
-    st.markdown("""
+    st.markdown(
+        """
         This tool generates an awesome list based on your input parameters. It includes resources like GitHub projects, 
         Google Scholar articles, YouTube videos, and podcasts. The awesome list is automatically generated using GPT models.
-    """)
+    """
+    )
 
-    keyword = st.text_input("Keyword",
-                            help="The keyword is critical for good results because we use it to search for repos in GitHub or videos on YouTube, etc.")
-    description = st.text_area("Description",
-                               help="This description is used to filter the results with the LLM to ensure we have relevant results. It is also the description we show in the final markdown.")
+    keyword = st.text_input(
+        "Keyword",
+        help="The keyword is critical for good results because we use it to search for repos in GitHub or videos on YouTube, etc.",
+    )
+    description = st.text_area(
+        "Description",
+        help="This description is used to filter the results with the LLM to ensure we have relevant results. It is also the description we show in the final markdown.",
+    )
 
     if keyword and description:
         create_button = st.empty()
         if create_button.button("Create Awesome List"):
             create_button.empty()
             with st.spinner(
-                    "The awesome list is being generated. This could take some minutes to finish. Please be patient."):
-                awesome_list, usage_info = generate_response(keyword, description, model)
+                "The awesome list is being generated. This could take some minutes to finish. Please be patient."
+            ):
+                awesome_list, usage_info = generate_response(
+                    keyword, description, model
+                )
             st.markdown("Your Awesome List is Ready!")
             st.markdown("---")
             st.markdown(awesome_list, unsafe_allow_html=True)
-            st.markdown(f"Model used: {model_name}; Number of tokens used: {usage_info['total_tokens']};")
-            st.download_button("Download Awesome List", data=awesome_list, file_name=f"{model_name}_Awesome_List.md",
-                               mime="text/markdown")
+            st.markdown(
+                f"Model used: {model_name}; Number of tokens used: {usage_info['total_tokens']};"
+            )
+            st.download_button(
+                "Download Awesome List",
+                data=awesome_list,
+                file_name=f"{model_name}_Awesome_List.md",
+                mime="text/markdown",
+            )
 
 
 if __name__ == "__main__":
