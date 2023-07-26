@@ -1,11 +1,20 @@
 import streamlit as st
+
 from awesome_list_generator import AwesomeListGenerator
 from utils import timing
 
 
 class AppState:
-    keys = ["output", "user_input", "model_name", "tokens", "input_submitted"]
-    default_values = ["", "", "", 0.0, False]
+    keys = [
+        "output",
+        "user_input",
+        "model_name",
+        "tokens",
+        "input_submitted",
+        "awesome_list",
+        "usage_info",
+    ]
+    default_values = ["", "", "", 0.0, False, "", {}]
 
     @classmethod
     def initialize(cls) -> None:
@@ -59,8 +68,24 @@ def setup_main_container():
         "Description",
         help="This description is used to filter the results with the LLM to ensure we have relevant results. It is also the description we show in the final markdown.",
     )
+    if st.session_state["awesome_list"]:
+        awesome_list = st.session_state["awesome_list"]
+        usage_info = st.session_state["usage_info"]
 
-    if keyword and description:
+        st.markdown("Your Awesome List is Ready!")
+        st.markdown("---")
+        st.markdown(awesome_list, unsafe_allow_html=True)
+        st.markdown(
+            f"Model used: {model_name}; Number of tokens used: {usage_info['total_tokens']};"
+        )
+        st.download_button(
+            "Download Awesome List",
+            data=awesome_list,
+            file_name=f"{model_name}_Awesome_List.md",
+            mime="text/markdown",
+        )
+
+    elif keyword and description:
         create_button = st.empty()
         if create_button.button("Create Awesome List"):
             create_button.empty()
@@ -70,18 +95,9 @@ def setup_main_container():
                 awesome_list, usage_info = generate_response(
                     keyword, description, model
                 )
-            st.markdown("Your Awesome List is Ready!")
-            st.markdown("---")
-            st.markdown(awesome_list, unsafe_allow_html=True)
-            st.markdown(
-                f"Model used: {model_name}; Number of tokens used: {usage_info['total_tokens']};"
-            )
-            st.download_button(
-                "Download Awesome List",
-                data=awesome_list,
-                file_name=f"{model_name}_Awesome_List.md",
-                mime="text/markdown",
-            )
+            st.session_state["awesome_list"] = awesome_list
+            st.session_state["usage_info"] = usage_info
+            st.experimental_rerun()
 
 
 if __name__ == "__main__":
