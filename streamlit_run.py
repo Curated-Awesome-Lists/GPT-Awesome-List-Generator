@@ -8,11 +8,8 @@ from utils import timing
 
 class AppState:
     state = {
-        "output": "",
-        "user_input": "",
-        "model_name": "",
-        "tokens": 0.0,
-        "input_submitted": False,
+        "keyword": "",
+        "description": "",
         "awesome_list": "",
         "usage_info": {},
     }
@@ -49,7 +46,6 @@ def setup_streamlit() -> None:
 def setup_sidebar(model_map: Dict[str, str]) -> Tuple[str, str]:
     st.sidebar.title("Sidebar")
     model_name = st.sidebar.radio("Choose a model:", tuple(model_map.keys()))
-    counter_placeholder = st.sidebar.empty()
     return model_name, model_map[model_name]
 
 
@@ -87,11 +83,11 @@ def setup_main_container(model_name: str, model: str) -> None:
     st.markdown(
         """This tool generates an awesome list based on your input parameters. It includes resources like GitHub projects, Google Scholar articles, YouTube videos, and podcasts. The awesome list is automatically generated using GPT models."""
     )
-    keyword = st.text_input(
+    st.session_state["keyword"] = st.text_input(
         "Keyword",
         help="The keyword is critical for good results because we use it to search for repos in GitHub or videos on YouTube, etc.",
     )
-    description = st.text_area(
+    st.session_state["description"] = st.text_area(
         "Description",
         help="This description is used to filter the results with the LLM to ensure we have relevant results. It is also the description we show in the final markdown.",
     )
@@ -100,8 +96,10 @@ def setup_main_container(model_name: str, model: str) -> None:
         display_generated_awesome_list(
             model_name, st.session_state["awesome_list"], st.session_state["usage_info"]
         )
-    elif keyword and description:
-        generate_awesome_list(keyword, description, model)
+    elif st.session_state["keyword"] and st.session_state["description"]:
+        generate_awesome_list(
+            st.session_state["keyword"], st.session_state["description"], model
+        )
 
 
 if __name__ == "__main__":
