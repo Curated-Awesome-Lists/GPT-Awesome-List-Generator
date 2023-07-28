@@ -9,7 +9,7 @@ GPT 3.5 or GPT 4.
 
 ## Demo 🎥
 
-[![Awesome List Generator in Action](https://img.youtube.com/vi/<video-id>/0.jpg)](https://www.youtube.com/shorts/HpYze-xr_r4 "Click to Watch!")
+[![Awesome List Generator in Action](https://img.youtube.com/vi/<video-id>/0.jpg)]([https://www.youtube.com/shorts/HpYze-xr_r4](https://www.youtube.com/watch?v=UKgG6IPKMvo&ab_channel=alialsaeedi) "Click to Watch!")
 
 ## Setup ⚙️
 
