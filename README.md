@@ -53,7 +53,7 @@ The main class used in this project is the `AwesomeListGenerator`. This class ac
 - `data_extraction_batch_size`: An integer representing the number of data items to process in each batch (default is
   10). For example, if the batch size is 10, then the data will be fetched from the data sources in batches of 10 (like
   10 github projects at a time).
-- `number_of_results`: An integer representing the number of results to fetch from each data source (default is 40). the
+- `number_of_results`: An integer representing the number of results to fetch from each data source (default is 20). the
   number of results to fetch from each data source (default is 20). For example, fetch 20 Github projects then process
   them with LLM model in batches based on data_extraction_batch_size.
 

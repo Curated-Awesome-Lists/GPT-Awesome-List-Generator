@@ -61,7 +61,7 @@ class AwesomeListGenerator:
             data_extraction_batch_size : int
                 the number of data items to process in each batch (default is 10)
             number_of_results : int
-                the number of results to fetch from each data source (default is 40)
+                the number of results to fetch from each data source (default is 20)
         """
 
         self.keyword = keyword
