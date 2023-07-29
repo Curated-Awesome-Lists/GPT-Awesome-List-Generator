@@ -40,12 +40,12 @@ class AwesomeListGenerator:
     """
 
     def __init__(
-        self,
-        keyword: str,
-        description: str,
-        model: str = "gpt-3.5-turbo-16k",
-        data_extraction_batch_size: int = 10,
-        number_of_results: int = 20,
+            self,
+            keyword: str,
+            description: str,
+            model: str = "gpt-3.5-turbo-16k",
+            data_extraction_batch_size: int = 10,
+            number_of_results: int = 20,
     ):
         """
         Constructs all the necessary attributes for the AwesomeListGenerator object.
@@ -120,5 +120,10 @@ class AwesomeListGenerator:
         for key, value in markdown_contents.items():
             markdown += f"## {key}\n\n"
             markdown += value + "\n"
+
+        # Advertisement for the project
+        markdown += "---\n\n"
+        markdown += "This initial version of the Awesome List was generated with the help of the [Awesome List Generator](https://github.com/alialsaeedi19/GPT-Awesome-List-Maker). "
+        markdown += "It's an open-source Python package that uses the power of GPT models to automatically curate and generate starting points for resource lists related to a specific topic. "
 
         return markdown

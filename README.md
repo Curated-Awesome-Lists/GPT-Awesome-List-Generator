@@ -119,6 +119,15 @@ kinds of contributions and appreciate your interest in our project!
 - [ ] Design scraper for preprint servers like arXiv and bioRxiv
 - [ ] Integrate online course platforms such as Coursera, Udemy, and Khan Academy
 
+## Projects Created Using Our Tool 🚀
+
+- [Awesome Auto-GPT](https://github.com/alronz/Awesome-Auto-GPT) - This awesome list is dedicated to Auto-GPT, a pioneering open-source project that showcases the capabilities of the GPT-4 language model. Auto-GPT is at the forefront of AI, seamlessly chaining together Large Language Model (LLM) "thoughts" to autonomously accomplish any set objectives, thereby redefining the boundaries of what AI can do.
+- [Awesome Automatic1111 (a1111) Stable Diffusion WebUI](https://github.com/alronz/awesome-stable-diffusion-webui) - An awesome list centering on the Automatic1111 (a1111) Stable Diffusion WebUI, an interactive browser interface for the Stable Diffusion generative model. This tool simplifies the process of creating realistic images from textual or visual inputs, and its user-friendly interface, built on Gradio, makes web-based interaction with machine learning models more accessible.
+
+
+We love seeing the incredible awesome lists that our community creates. If you've used our tool to generate an awesome list, feel free to [let us know](https://github.com/alialsaeedi19/GPT-Awesome-List-Maker/issues/new), and we will feature your project here!
+
+
 ## Support Us ❤️
 
 Did you find this project useful? If it has brought value to you, please give us a ⭐ on GitHub. This gesture not only
