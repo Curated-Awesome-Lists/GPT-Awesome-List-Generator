@@ -121,4 +121,9 @@ class AwesomeListGenerator:
             markdown += f"## {key}\n\n"
             markdown += value + "\n"
 
+        # Advertisement for the project
+        markdown += "---\n\n"
+        markdown += "This initial version of the Awesome List was generated with the help of the [Awesome List Generator](https://github.com/alialsaeedi19/GPT-Awesome-List-Maker). "
+        markdown += "It's an open-source Python package that uses the power of GPT models to automatically curate and generate starting points for resource lists related to a specific topic. "
+
         return markdown

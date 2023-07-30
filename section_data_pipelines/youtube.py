@@ -10,11 +10,14 @@ def search_youtube(keyword: str, limit: int = 5) -> list[dict]:
 
     search_results = []
     for result in results["result"]:
+        description_snippet = result.get("descriptionSnippet")
         search_results.append(
             {
                 "title": result.get("title"),
                 "link": result.get("link"),
-                "description": result.get("descriptionSnippet")[0]["text"],
+                "description": description_snippet[0]["text"]
+                if description_snippet
+                else None,
                 "views": result.get("viewCount")["short"],
             }
         )
