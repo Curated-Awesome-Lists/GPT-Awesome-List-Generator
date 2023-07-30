@@ -40,12 +40,12 @@ class AwesomeListGenerator:
     """
 
     def __init__(
-            self,
-            keyword: str,
-            description: str,
-            model: str = "gpt-3.5-turbo-16k",
-            data_extraction_batch_size: int = 10,
-            number_of_results: int = 20,
+        self,
+        keyword: str,
+        description: str,
+        model: str = "gpt-3.5-turbo-16k",
+        data_extraction_batch_size: int = 10,
+        number_of_results: int = 20,
     ):
         """
         Constructs all the necessary attributes for the AwesomeListGenerator object.

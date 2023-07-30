@@ -15,7 +15,9 @@ def search_youtube(keyword: str, limit: int = 5) -> list[dict]:
             {
                 "title": result.get("title"),
                 "link": result.get("link"),
-                "description": description_snippet[0]["text"] if description_snippet else None,
+                "description": description_snippet[0]["text"]
+                if description_snippet
+                else None,
                 "views": result.get("viewCount")["short"],
             }
         )
