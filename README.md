@@ -9,7 +9,9 @@ GPT 3.5 or GPT 4.
 
 ## Demo 🎥
 
-https://github.com/alialsaeedi19/GPT-Awesome-List-Maker/assets/21360696/e8858303-9108-4235-9fd1-9408e885f8f0
+
+https://github.com/alialsaeedi19/GPT-Awesome-List-Generator/assets/21360696/0029cb67-0ba1-459f-bb1d-0bd73b7c6df5
+
 
 ## Setup ⚙️
 
