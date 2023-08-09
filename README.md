@@ -1,4 +1,4 @@
-# Awesome List Generator 📜✨
+# Awesome List Generator 📜✨ [![Awesome](https://awesome.re/badge.svg)](https://awesome.re)
 
 This is a Python program that automatically generates an "awesome list" for a specific
 keyword as a markdown file. An "awesome list" is a list of resources related to a
