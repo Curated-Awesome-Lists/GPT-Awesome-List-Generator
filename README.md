@@ -173,6 +173,24 @@ kinds of contributions and appreciate your interest in our project!
 - [x] Add section for videos
 - [x] Add section for conferences and events
 - [x] Support github collections and topics
+- [ ] **Additional Use Cases**
+    - [ ] Not only create 'Awesome Lists'
+    - [ ] Track daily, weekly, and monthly updates on a specific topic
+- [ ] **Website Enhancement**
+    - [ ] User-friendly and easy navigation
+    - [ ] Real-time collaboration feature
+    - [ ] Exporting options in different formats
+    - [ ] Interactive resource visualization
+    - [ ] Advanced filters, tags, and sorting options
+- [ ] **GPT Model Options**
+    - [ ] Support for more GPT model options to better match user research needs
+- [ ] **Notification Feature**
+    - [ ] Alert users about new resources and updates in their areas of interest
+- [ ] **Community Contribution Platform**
+    - [ ] Allow community members to add, check, and rank resources
+- [ ] **API Integration**
+    - [ ] Allow other developers to build on this tool
+
 
 
 ## Projects Created Using Our Tool 🚀
