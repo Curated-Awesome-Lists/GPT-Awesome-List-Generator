@@ -3,7 +3,7 @@
 This is a Python program that automatically generates an "awesome list" for a specific
 keyword as a markdown file. An "awesome list" is a list of resources related to a
 specific topic. Currently, the resources include GitHub projects, Google Scholar
-articles, YouTube videos, and podcasts. The awesome list is automatically generated
+articles, YouTube videos, courses, slides and presentations, software and tools and podcasts. The awesome list is automatically generated
 using GPT models; you can choose between different models to generate the list, such as
 GPT 3.5 or GPT 4.
 
