@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 
-from section_data_extractor import SectionDataExtractor
+from section_data_extractor import SectionDataExtractor, GithubMode
 from section_markdown_generator import SectionMarkdownGenerator
 from utils import save_markdown
 
@@ -40,12 +40,13 @@ class AwesomeListGenerator:
     """
 
     def __init__(
-        self,
-        keyword: str,
-        description: str,
-        model: str = "gpt-3.5-turbo-16k",
-        data_extraction_batch_size: int = 10,
-        number_of_results: int = 20,
+            self,
+            keyword: str,
+            description: str,
+            model: str = "gpt-3.5-turbo-16k",
+            data_extraction_batch_size: int = 10,
+            number_of_results: int = 20,
+            github_mode: GithubMode = GithubMode.REPO
     ):
         """
         Constructs all the necessary attributes for the AwesomeListGenerator object.
@@ -62,6 +63,8 @@ class AwesomeListGenerator:
                 the number of data items to process in each batch (default is 10)
             number_of_results : int
                 the number of results to fetch from each data source (default is 20)
+            github_mode : GithubMode
+                the mode to use for fetching data from GitHub (default is GithubMode.REPO)
         """
 
         self.keyword = keyword
@@ -69,7 +72,7 @@ class AwesomeListGenerator:
         self.model = model
         self.data_extraction_batch_size = data_extraction_batch_size
         self.section_data_extractor = SectionDataExtractor(
-            keyword=keyword, description=description, num_results=number_of_results
+            keyword=keyword, description=description, num_results=number_of_results, github_mode=github_mode
         )
         self.section_generator = SectionMarkdownGenerator(model)
 

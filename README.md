@@ -25,6 +25,54 @@ https://github.com/alialsaeedi19/GPT-Awesome-List-Generator/assets/21360696/0029
     ```
     OPENAI_API_KEY=<your_openai_api_key>
     ```
+   
+### Setting up Google Cloud API Key and Custom Search Engine ID
+
+####  Prerequisites
+A Google account.
+
+#### Instructions
+1. Obtain a Google Cloud API Key
+
+- Visit the [Google Cloud Console](https://console.cloud.google.com/).
+
+- If you haven't already, create a new project by clicking on the "Select a project" dropdown at the top-right corner, then click on "NEW PROJECT".
+
+- Once your project is created and selected, navigate to the Navigation menu (three horizontal lines at the top-left corner), and then click on "APIs & Services" > "Credentials".
+
+- Click on the "Create Credentials" button and select "API key". Once created, your API key will be displayed.
+
+- Copy your API key and save it securely. You'll use this key in your application to authenticate your requests.
+
+
+2. Set Up a Custom Search Engine and Get the Search Engine ID
+
+ - Go to [Google Custom Search homepage](https://cse.google.com/cse/).
+
+ - Click on "Create a custom search engine".
+
+ - In the "Sites to search" section, you can specify websites you want to search or choose "Search the entire web" to allow broader search capabilities. However, if you choose "Search the entire web", make sure to toggle "Search only included sites" off under the "Sites to search" section.
+
+ - Fill in other required fields like the name of your search engine.
+
+ - Click on the "Create" button at the bottom.
+
+ - Once your search engine is created, you'll be directed to a setup page. Here, find and copy the "Search engine ID" (also called "cx" in some contexts). You'll use this ID in your application to specify which custom search engine to use for queries.
+
+3. Enable the Custom Search API for Your Project:
+
+- Visit the [Google Cloud Console](https://console.cloud.google.com/).
+- Navigate to "APIs & Services" > "Library".
+- Search for "Custom Search API".
+- Click on it, and you should see an "Enable" button. Click that button to enable the Custom Search API for your project.
+
+Finally, add the following environment variables to .env file:
+
+```
+    GOOGLE_CLOUD_API_KEY='<google cloud api key>'
+    CUSTOM_SEARCH_ENGINE_ID='<custom search engine id>'
+```
+
 
 ## Usage 💻
 
@@ -115,11 +163,17 @@ kinds of contributions and appreciate your interest in our project!
 
 ## TODO Checklist
 
-- [ ] Add Medium Scraper
-- [ ] Integrate Google Books or Amazon API for books
-- [ ] Develop a scraper for dev.to and other developer-focused platforms
-- [ ] Design scraper for preprint servers like arXiv and bioRxiv
-- [ ] Integrate online course platforms such as Coursera, Udemy, and Khan Academy
+- [x] Add section for articles
+- [x] Add section for courses
+- [x] Add section for books
+- [x] Add section for research papers
+- [x] Add section for podcasts
+- [x] Add section for slides and presentations
+- [x] Add section for software and tools
+- [x] Add section for videos
+- [x] Add section for conferences and events
+- [x] Support github collections and topics
+
 
 ## Projects Created Using Our Tool 🚀
 

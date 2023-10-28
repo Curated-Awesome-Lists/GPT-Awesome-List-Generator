@@ -1,25 +1,39 @@
-from section_data_pipelines import google_scholar, github, youtube, podcast
+from section_data_pipelines import github, google
+
+from enum import Enum
+
+
+class GithubMode(Enum):
+    REPO = "repo"
+    TOPIC = "topic"
+    COLLECTION = "collection"
 
 
 class SectionDataExtractor:
-    def __init__(self, keyword: str, description: str, num_results: int = 20):
+    def __init__(self, keyword: str, description: str, num_results: int = 20,
+                 github_mode: GithubMode = GithubMode.REPO):
         self.keyword = keyword
         self.description = description
         self.num_results = num_results
 
+        github_function = github.get_github_search_results
+        if github_mode == GithubMode.TOPIC:
+            github_function = github.get_github_topic_results
+        elif github_mode == GithubMode.COLLECTION:
+            github_function = github.get_github_collection_results
+
         self.data_pipelines = [
-            (
-                "GitHub projects",
-                "the number of stars",
-                github.get_github_search_results,
-            ),
-            ("YouTube videos", "the number of views", youtube.search_youtube),
-            (
-                "Google Scholar papers",
-                "number of citations else relevance",
-                google_scholar.scrape_google_scholar,
-            ),
-            ("podcasts", "their relevance", podcast.get_podcasts),
+            ("GitHub projects", "the number of stars", github_function),
+            ("Articles & Blogs", "their relevance", google.search_google_for_articles),
+            ("Online Courses", "their relevance", google.search_google_for_courses),
+            ("Books", "their relevance", google.search_google_for_books),
+            ("Research Papers", "their relevance", google.search_google_for_research),
+            ("Videos", "their relevance", google.search_google_for_videos),
+            ("Tools & Software", "their relevance", google.search_google_for_tools_software),
+            ("Conferences & Events", "their relevance",
+             google.search_google_for_conferences_or_events),
+            ("Slides & Presentations", "their relevance", google.search_google_for_slides_or_presentations),
+            ("Podcasts", "their relevance", google.search_google_for_podcasts),
         ]
 
     def get_data(self) -> dict:
@@ -33,14 +47,12 @@ class SectionDataExtractor:
 
     def _get_prompt_per_pipeline(self, data_type: str, sort_metric: str) -> list[dict]:
         prompt = f"""
-        I will provide a list of elements categorized as '{data_type}', each associated with a specific keyword '{self.keyword}' and an accompanying description "{self.description}". These elements are sorted based on '{sort_metric}'.
+        I will provide a list of items categorized as '{data_type}'. They are supposed to be related to "{self.keyword}, {self.description}". These items are sorted based on '{sort_metric}'.
 
-        Please perform the following tasks:
-        1. Review the '{data_type}' and keep only those that are directly relevant to the given keyword and its respective description. 
-        2. Compare the description of each item in the '{data_type}' with the given description, and keep only those that are directly relevant to the give description.
-        3. Format the filtered '{data_type}' into a visually appealing markdown unordered list. 
-        4. Enhance the list's aesthetics and clarity for import into a markdown editor by adding an appropriate emoji next to each element, next to its '{sort_metric}' value.
-        5. Ensure that the description of each item on the list is concise and coherent ideally 2-3 sentences long.
+        I want you to do the following
+        1. Review the items and filter out any unrelated items to the given description. 
+        2. Format the items into a markdown unordered list and add appropriate emoji if makes sense. 
+        4. Ensure that the description of each item on the list is concise ideally 2-3 sentences long.
         "
         """
         return [

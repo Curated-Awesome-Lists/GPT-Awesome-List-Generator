@@ -3,6 +3,7 @@ from typing import Dict, Tuple
 import streamlit as st
 
 from awesome_list_generator import AwesomeListGenerator
+from section_data_extractor import GithubMode
 from utils import timing
 
 
@@ -28,9 +29,9 @@ class AppState:
 
 @timing
 def generate_response(
-    keyword: str, description: str, model: str
+        keyword: str, description: str, model: str, num_results: int, github_mode: GithubMode
 ) -> Tuple[str, Dict[str, float]]:
-    awesome_list_generator = AwesomeListGenerator(keyword, description, model, 10, 20)
+    awesome_list_generator = AwesomeListGenerator(keyword, description, model, 10, num_results, github_mode)
     response, usage_info = awesome_list_generator.save_and_return_awesome_list()
     return response, usage_info
 
@@ -43,14 +44,31 @@ def setup_streamlit() -> None:
     )
 
 
-def setup_sidebar(model_map: Dict[str, str]) -> Tuple[str, str]:
+def setup_sidebar(model_map: Dict[str, str]) -> Tuple[str, str, GithubMode]:
     st.sidebar.title("Sidebar")
+    # Insert the GitHub mode dropdown here
+    github_mode = st.sidebar.selectbox(
+        "Select GitHub Mode:",
+        [mode.value for mode in GithubMode],
+        help="Choose the mode to define how the app fetches data from GitHub."
+    )
+
+    # Explanation for GitHub modes
+    if st.sidebar.checkbox("Show explanations for GitHub modes"):
+        st.sidebar.markdown("""
+          **REPO**: This mode fetches data based on GitHub repositories using the endpoint: `https://api.github.com/search/repositories?q={keyword}`. Results are sorted by stars in descending order.
+
+          **TOPIC**: This mode searches based on GitHub topics using the endpoint: `https://api.github.com/search/repositories?q=topic:"{topic}"+is:featured`. It will aggregate repositories and projects under a specific topic related to your keyword. Results are sorted by stars in descending order.
+
+          **COLLECTION**: This mode fetches data from GitHub collections using URLs like `https://github.com/collections/<collection_id>`. Collections are curated groups of repositories or topics by GitHub users or organizations.
+          """)
+
     model_name = st.sidebar.radio("Choose a model:", tuple(model_map.keys()))
-    return model_name, model_map[model_name]
+    return model_name, model_map[model_name], GithubMode(github_mode)
 
 
 def display_generated_awesome_list(
-    model_name: str, awesome_list: str, usage_info: Dict[str, float]
+        model_name: str, awesome_list: str, usage_info: Dict[str, float]
 ) -> None:
     st.markdown("Your Awesome List is Ready!")
     st.markdown("---")
@@ -66,20 +84,21 @@ def display_generated_awesome_list(
     )
 
 
-def generate_awesome_list(keyword: str, description: str, model: str) -> None:
+def generate_awesome_list(keyword: str, description: str, model: str, num_results: int,
+                          github_mode: GithubMode) -> None:
     create_button = st.empty()
     if create_button.button("Create Awesome List"):
         create_button.empty()
         with st.spinner(
-            "The awesome list is being generated. This could take some minutes to finish. Please be patient."
+                "The awesome list is being generated. This could take some minutes to finish. Please be patient."
         ):
-            awesome_list, usage_info = generate_response(keyword, description, model)
+            awesome_list, usage_info = generate_response(keyword, description, model, num_results, github_mode)
         st.session_state["awesome_list"] = awesome_list
         st.session_state["usage_info"] = usage_info
         st.experimental_rerun()
 
 
-def setup_main_container(model_name: str, model: str) -> None:
+def setup_main_container(model_name: str, model: str, github_mode: GithubMode) -> None:
     st.markdown(
         """This tool generates an awesome list based on your input parameters. It includes resources like GitHub projects, Google Scholar articles, YouTube videos, and podcasts. The awesome list is automatically generated using GPT models."""
     )
@@ -91,6 +110,7 @@ def setup_main_container(model_name: str, model: str) -> None:
         "Description",
         help="This description is used to filter the results with the LLM to ensure we have relevant results. It is also the description we show in the final markdown.",
     )
+    num_results = st.number_input("Number of Results", min_value=1, value=20, step=1)
 
     if st.session_state["awesome_list"]:
         display_generated_awesome_list(
@@ -98,16 +118,16 @@ def setup_main_container(model_name: str, model: str) -> None:
         )
     elif st.session_state["keyword"] and st.session_state["description"]:
         generate_awesome_list(
-            st.session_state["keyword"], st.session_state["description"], model
+            st.session_state["keyword"], st.session_state["description"], model, num_results, github_mode
         )
 
 
 if __name__ == "__main__":
     AppState.initialize()
     setup_streamlit()
-    model_map = {"GPT-3.5": "gpt-3.5-turbo-16k", "GPT-4": "gpt-4-0314"}
-    model_name, model = setup_sidebar(model_map)
+    model_map = {"GPT-3.5": "gpt-3.5-turbo-16k", "GPT-4": "gpt-4"}
+    model_name, model, github_mode = setup_sidebar(model_map)
     if st.sidebar.button("Clear Conversation", key="clear"):
         AppState.reset()
         st.experimental_rerun()
-    setup_main_container(model_name, model)
+    setup_main_container(model_name, model, github_mode)
