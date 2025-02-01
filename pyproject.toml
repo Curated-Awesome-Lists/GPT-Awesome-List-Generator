@@ -8,7 +8,7 @@ packages = [{ include = "clients" }, { include = "section_data_pipelines" }]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-openai = "^0.27.8"
+openai = "1.6.0"
 python-dotenv = "^1.0.0"
 pandas = "^2.0.3"
 beautifulsoup4 = "^4.12.2"

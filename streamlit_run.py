@@ -95,7 +95,7 @@ def generate_awesome_list(keyword: str, description: str, model: str, num_result
             awesome_list, usage_info = generate_response(keyword, description, model, num_results, github_mode)
         st.session_state["awesome_list"] = awesome_list
         st.session_state["usage_info"] = usage_info
-        st.experimental_rerun()
+        st.rerun()
 
 
 def setup_main_container(model_name: str, model: str, github_mode: GithubMode) -> None:
@@ -125,9 +125,9 @@ def setup_main_container(model_name: str, model: str, github_mode: GithubMode) -
 if __name__ == "__main__":
     AppState.initialize()
     setup_streamlit()
-    model_map = {"GPT-3.5": "gpt-3.5-turbo-16k", "GPT-4": "gpt-4"}
+    model_map = {"o1-mini": "o1-mini-2024-09-12", "GPT-3.5": "gpt-3.5-turbo", "GPT-4O": "gpt-4o-2024-11-20"}
     model_name, model, github_mode = setup_sidebar(model_map)
     if st.sidebar.button("Clear Conversation", key="clear"):
         AppState.reset()
-        st.experimental_rerun()
+        st.rerun()
     setup_main_container(model_name, model, github_mode)

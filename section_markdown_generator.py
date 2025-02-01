@@ -62,7 +62,7 @@ class SectionMarkdownGenerator:
             completion = self.client.send_messages(model=self.model)
             total_tokens += completion.usage.total_tokens
 
-            response_message = completion["choices"][0]["message"].content
+            response_message = completion.choices[0].message.content
             batch_bullet_points = extract_bullets_from_markdown(response_message)
             bullet_points = bullet_points + batch_bullet_points + "\n"
 
@@ -75,7 +75,7 @@ class SectionMarkdownGenerator:
         markdown_contents = {}
         total_tokens = 0
 
-        results = Parallel(n_jobs=-1)(
+        results = Parallel(n_jobs=-1, backend="threading")(
             delayed(self.process_one_data_type)(key, value, batch_size)
             for key, value in data_types_info.items()
         )
