@@ -75,7 +75,7 @@ class SectionMarkdownGenerator:
         markdown_contents = {}
         total_tokens = 0
 
-        results = Parallel(n_jobs=-1)(
+        results = Parallel(n_jobs=-1, backend="threading")(
             delayed(self.process_one_data_type)(key, value, batch_size)
             for key, value in data_types_info.items()
         )
